@@ -20,8 +20,23 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'Pengguna';
+    protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('portal.user.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('portal.user.plural_model_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('portal.user.navigation_group');
+    }
+    
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

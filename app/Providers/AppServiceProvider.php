@@ -7,6 +7,9 @@ use Spatie\Permission\PermissionRegistrar;
 use App\Models\Permission;
 use App\Models\Role;
 
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
+use BezhanSalleh\LanguageSwitch\Enums\DisplayMode;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -27,5 +30,13 @@ class AppServiceProvider extends ServiceProvider
             ->setRoleClass(Role::class);
 
         //
+        
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+            $switch->locales(['en', 'ms'])
+            ->displayMode(DisplayMode::Modal)
+            ->modalHeading('Choose Language')
+            ->modalIcon('heroicon-o-language')
+            ->modalIconColor('primary');
+        });
     }
 }

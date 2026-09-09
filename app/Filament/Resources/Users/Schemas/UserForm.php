@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\UserCategory;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -31,18 +32,24 @@ class UserForm
                 TextInput::make('position'),
                 TextInput::make('phone')
                     ->tel(),
-                TextInput::make('unit_id')
-                    ->numeric(),
+
+                Select::make('user_category')
+                    ->options(UserCategory::class)
+                    ->required(),
+
+                TextInput::make('agency_name')
+                    ->required(),
 
                 Select::make('department')
-                ->label('Jabatan / Bahagian')
                 ->options(Department::query()->pluck('name', 'id'))
                 ->live()
-                ->afterStateUpdated(fn (Set $set) => $set('unit_id', null))
+                ->afterStateUpdated(function (Set $set) {
+                    $set('unit_id', null);
+                    $set('agency_name', 'Pejabat Daerah dan Tanah Manjung');
+                } )
                 ->dehydrated(false),
 
                 Select::make('unit_id')
-                ->label('Unit')
                 ->options(function (Get $get): Collection {
                     $departmentId = $get('department');
                     

@@ -19,7 +19,7 @@
             <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-1">Portal Intranet PDT Manjung</h1>
             <p class="text-sm font-semibold text-gray-600 mb-2">Pejabat Daerah dan Tanah Manjung</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300">
-                UAT
+                Version 1
             </span>
         </div>
     </div>
