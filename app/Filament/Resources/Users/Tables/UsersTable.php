@@ -8,6 +8,9 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Department;
 class UsersTable
 {
     public static function configure(Table $table): Table
@@ -46,6 +49,16 @@ class UsersTable
             ])
             ->filters([
                 //
+                SelectFilter::make('department')
+                    ->label(__('portal.user.columns.department'))
+                    ->options(function() { Department::pluck('name', 'id')->toArray();})
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas('unit', function (Builder $query) use ($data) {
+                                $query->where('department_id', $data['value']);
+                            });
+                        }
+        }),
             ])
             ->recordActions([
                 EditAction::make(),

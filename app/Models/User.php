@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -28,6 +29,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => UserStatus::class
         ];
     }
 
@@ -41,5 +43,11 @@ class User extends Authenticatable
     public function department()
     {
         return $this->hasOneThrough(Department::class, Unit::class);
+    }
+
+    //module requests
+    public function moduleRequests()
+    {
+        return $this->hasMany(ModuleRequest::class);
     }
 }
