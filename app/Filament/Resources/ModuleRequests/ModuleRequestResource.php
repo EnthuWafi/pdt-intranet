@@ -20,10 +20,10 @@ class ModuleRequestResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    public static function form(Schema $schema): Schema
-    {
-        return ModuleRequestForm::configure($schema);
-    }
+    // public static function form(Schema $schema): Schema
+    // {
+    //     return ModuleRequestForm::configure($schema);
+    // }
 
     public static function table(Table $table): Table
     {
@@ -41,8 +41,13 @@ class ModuleRequestResource extends Resource
     {
         return [
             'index' => ListModuleRequests::route('/'),
-            'create' => CreateModuleRequest::route('/create'),
-            'edit' => EditModuleRequest::route('/{record}/edit'),
+            // 'create' => CreateModuleRequest::route('/create'),
+            // 'edit' => EditModuleRequest::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

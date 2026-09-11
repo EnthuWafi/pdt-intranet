@@ -33,6 +33,8 @@ return [
         'confirm_approve' => 'Are you sure you want to approve this access?',
     ],
 
+    //resources
+
     'user' => [
         'status' => [
             'pending' => 'Pending Approval',
@@ -62,11 +64,14 @@ return [
         ],
     ],
     'module' => [
+        'list_available' => 'List of Available Modules',
+        'purpose_request' => 'Purpose of Request',
         'columns' => [
-            'name' => 'Module Name',
             'status' => 'Module Status',
             'created_at' => 'Date Requested',
-        ]
+            'purpose' => 'Purpose',
+            'name' => 'Module Name',
+        ],
     ],
 
 

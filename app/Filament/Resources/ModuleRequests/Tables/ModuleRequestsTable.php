@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ModuleRequests\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\TextSize;
 use Filament\Tables\Table;
 
 use Filament\Tables\Columns\TextColumn;
@@ -28,6 +29,12 @@ class ModuleRequestsTable
                     ->label(__('portal.module.columns.name'))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('purpose')
+                    ->label('Tujuan Permohonan')
+                    ->wrap()
+                    ->size(TextSize::Small)
+                    ->searchable(),
 
                 TextColumn::make('status')
                     ->label(__('portal.module.columns.status'))
@@ -75,9 +82,6 @@ class ModuleRequestsTable
                             ->danger()
                             ->send();
                     }),
-            ])
-            ->recordActions([
-                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionRegistrar;
 use App\Models\Permission;
@@ -38,5 +39,7 @@ class AppServiceProvider extends ServiceProvider
             ->modalIcon('heroicon-o-language')
             ->modalIconColor('primary');
         });
+
+        FilamentShield::prohibitDestructiveCommands($this->app->isProduction());
     }
 }

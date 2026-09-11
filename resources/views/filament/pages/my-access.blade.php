@@ -1,20 +1,21 @@
 <x-filament-panels::page>
     {{-- Page content --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <x-filament::section>
+        
+        <x-slot name="heading">
+            Mohon Akses Modul
+        </x-slot>
+        <x-slot name="description">
+            Pilih modul yang diperlukan. Peranan modul akan ditentukan oleh Pentadbir Utama semasa kelulusan.
+        </x-slot>
 
-        <div class="md:col-span-2">
-            @livewire(\App\Filament\Widgets\ModuleRequestWidget::class)
+        {{ $this->form }}
+
+        <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm text-gray-600 border-gray-200">
+            <span class="font-bold text-gray-900 dark:text-white">Nota:</span> Permohonan tidak terus membuka akses. Status akan menjadi 
+            <span class="font-semibold text-warning-600">Menunggu Kelulusan</span> dan dihantar ke 
+            <span class="font-semibold">Pengurusan Pengguna &rarr; Kelulusan Akses Modul</span> untuk semakan Pentadbir Utama.
         </div>
 
-        <div class="md:col-span-1">
-            <x-filament::section>
-                <h3 class="font-bold">Cara Memohon</h3>
-                <p class="text-sm text-gray-500">
-                    Sila klik butang mohon pada modul yang anda perlukan. 
-                    Kelulusan akan diberikan oleh Pentadbir Utama.
-                </p>
-            </x-filament::section>
-        </div>
-
-    </div>
+    </x-filament::section>
 </x-filament-panels::page>
