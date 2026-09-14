@@ -22,7 +22,7 @@ return [
     'messages' => [
         // Success toasts
         'request_submitted' => 'Your access request has been submitted successfully.',
-        'access_approved' => 'Access has been approved and the role assigned.',
+        'access_approved' => 'Access has been approved.',
         'access_rejected' => 'Access request has been rejected.',
         
         // Warnings & Errors
