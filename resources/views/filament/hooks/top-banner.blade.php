@@ -13,7 +13,7 @@
 <div class="border-none border-gray-200 rounded-2xl shadow-sm p-6 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6">
     
     <div class="flex items-center gap-5">
-        <img src="/images/perak.webp" alt="Crest" class="h-24 w-24 object-contain drop-shadow-md">
+        <img src="{{ Vite::asset('resources/images/perak.webp') }}" alt="Crest" class="h-24 w-24 object-contain drop-shadow-md">
         <div>
             <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-1">Portal Intranet PDT Manjung</h1>
             <p class="text-sm font-semibold text-gray-600 mb-2">Pejabat Daerah dan Tanah Manjung</p>
@@ -28,8 +28,7 @@
         <!-- Profile Card -->
         <div class="border-gray-200 rounded-xl p-3 shadow-sm flex items-center gap-4 max-w-sm">
             <div class="h-12 w-12 rounded-full bg-gray-200 border-2 border-yellow-400 overflow-hidden shrink-0">
-                <!-- Fallback icon, replace with auth()->user()->avatar_url later -->
-                <svg class="w-full h-full text-gray-400 mt-2" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <img src="{{ auth()->user()->getFilamentAvatarUrl() }}" class="w-full h-full" >
             </div>
             <div>
                 <div class="flex items-center justify-between mb-1">

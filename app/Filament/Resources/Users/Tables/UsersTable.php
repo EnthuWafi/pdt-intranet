@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,6 +18,11 @@ class UsersTable
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->label(__('portal.user.columns.user_profile'))
+                    ->collection('avatar')
+                    ->circular()
+                    ->defaultImageUrl(fn ($record) => $record->getFilamentAvatarUrl()),
                 TextColumn::make('name')
                     ->label(__('portal.user.columns.name'))
                     ->searchable(),

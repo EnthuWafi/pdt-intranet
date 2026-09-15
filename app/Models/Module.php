@@ -22,6 +22,12 @@ class Module extends Model
         'is_active'
     ];
 
+    //module requests
+    public function moduleRequests()
+    {
+        return $this->hasMany(ModuleRequest::class);
+    }
+
     protected static function booted(): void
     {
         // No delete internal

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use App\Enums\UserCategory;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
@@ -19,6 +20,14 @@ class UserForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->label(__('portal.user.columns.user_profile'))
+                    ->collection('avatar')
+                    ->image()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->maxSize(2048)
+                    ->columnSpanFull(),
                 TextInput::make('name')
                     ->label(__('portal.user.columns.name'))
                     ->required(),

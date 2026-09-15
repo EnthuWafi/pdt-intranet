@@ -5,19 +5,22 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
     /**
      * Get the attributes that should be cast.
@@ -49,5 +52,48 @@ class User extends Authenticatable
     public function moduleRequests()
     {
         return $this->hasMany(ModuleRequest::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']);
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if ($avatar = $this->getFirstMediaUrl('avatar')) {
+            return $avatar;
+        }
+
+        $colors = $this->getAvatarColors();
+
+        // PHP_QUERY_RFC3986 for encoding
+        return config('services.ui_avatars.url') . '?' . http_build_query([
+            'name' => $this->name,
+            'background' => $colors['background'],
+            'color' => $colors['color'],
+            'format' => 'svg',
+        ], encoding_type: PHP_QUERY_RFC3986);
+    }
+
+    public function getAvatarColors(): array
+    {
+        $bg = substr(md5($this->name), 0, 6);
+
+        // Hex to RGB
+        $r = hexdec(substr($bg, 0, 2));
+        $g = hexdec(substr($bg, 2, 2));
+        $b = hexdec(substr($bg, 4, 2));
+
+        // YIQ contrast formula
+        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        $text = ($yiq >= 128) ? '000000' : 'ffffff';
+
+        return [
+            'background' => $bg,
+            'color' => $text,
+        ];
     }
 }

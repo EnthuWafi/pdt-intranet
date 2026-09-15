@@ -15,6 +15,8 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MyAccess extends Page
 {
@@ -32,9 +34,16 @@ class MyAccess extends Page
         return $schema
             ->components([
                 Form::make([
+                    //check box list for pickin shit
                     CheckboxList::make('module_ids')
                         ->label(__('portal.module.list_available'))
-                        ->options(Module::where('is_active', true)->pluck('name', 'id'))
+                        ->options(
+                            Module::where('is_active', true)
+                            ->whereDoesntHave('moduleRequests', function ($query) {
+                                $query->where('user_id', auth()->id())
+                                ->whereIn('status', [ModuleStatus::PENDING, ModuleStatus::APPROVED]);
+                            })
+                            ->pluck('name', 'id'))
                         ->descriptions(Module::where('is_active', true)->pluck('description', 'id'))
                         ->columns(3)
                         ->required(),
@@ -61,30 +70,46 @@ class MyAccess extends Page
     public function save(): void
     {
         $data = $this->form->getState();
-        $user = auth()->user();
 
-        foreach ($data['module_ids'] as $moduleId) {
-            $exists = ModuleRequest::where('user_id', $user->id)
-                ->where('module_id', $moduleId)
-                ->where('status', ModuleStatus::PENDING->value)
-                ->exists();
+        try {
+            DB::transaction(function() use ($data) {
 
-            if (! $exists) {
-                ModuleRequest::create([
-                    'user_id' => $user->id,
-                    'module_id' => $moduleId,
-                    'purpose' => $data['purpose'],
-                    'status' => ModuleStatus::PENDING->value, 
-                ]);
-            }
+                foreach ($data['module_ids'] as $moduleId) {
+                    //check for each if request exists
+
+                    $exists = ModuleRequest::query()
+                        ->where('user_id', auth()->id())
+                        ->where('module_id', $moduleId)
+                        ->where('status', [ModuleStatus::PENDING, ModuleStatus::APPROVED])
+                        ->exists();
+
+                    if ($exists) {
+                        throw ValidationException::withMessages([
+                            'module_ids' => __('portal.messages.already_applied')
+                        ]);
+                    }
+
+                    ModuleRequest::create([
+                        'user_id' => auth()->id(),
+                        'module_id' => $moduleId,
+                        'purpose' => $data['purpose'],
+                        'status' => ModuleStatus::PENDING->value, 
+                    ]);
+                }
+                    
+                $this->form->fill();
+
+                Notification::make()
+                    ->title(__('portal.messages.request_submitted'))
+                    ->success()
+                    ->send();
+            });
         }
-
-        $this->form->fill();
-
-        Notification::make()
-            ->title(__('portal.messages.request_submitted'))
-            ->success()
-            ->send();
+        catch (ValidationException $e) {
+            Notification::make()
+                ->title(__('portal.messages.already_applied'))
+                ->danger()
+                ->send();
+        }
     }
-
 }

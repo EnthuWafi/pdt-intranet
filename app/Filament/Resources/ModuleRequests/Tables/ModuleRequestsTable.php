@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ModuleRequests\Tables;
 
+use App\Enums\ExternalModuleRole;
 use App\Models\ModuleRequest;
 use Exception;
 use Filament\Actions\BulkActionGroup;
@@ -65,7 +66,7 @@ class ModuleRequestsTable
                         if ($record->module->is_internal) {
                             return [
                                 Select::make('roles')
-                                    ->label('Pilih Peranan')
+                                    ->label(__('portal.module.choose_role'))
                                     ->multiple()
                                     ->options(
                                         Role::where('name', 'like', strtoupper($record->module->code) . ':%')
@@ -79,8 +80,8 @@ class ModuleRequestsTable
                         // External: show notice or external role field
                         return [
                             Select::make('role')
-                            ->label('Pilih Peranan')
-                            ->options([0=>'Super Admin', 1=>'Admin', 2=>'User', 3=>'Viewer'])
+                            ->label(__('portal.module.choose_role'))
+                            ->options(ExternalModuleRole::class)
                             ->required()
                         ];
                     })

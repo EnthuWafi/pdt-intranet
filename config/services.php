@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    
+    'ui_avatars' => [
+        'url' => env('UI_AVATARS_URL', 'https://ui-avatars.com/api/'),
+    ],
 
 ];

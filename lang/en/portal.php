@@ -26,11 +26,18 @@ return [
         'access_rejected' => 'Access request has been rejected.',
         
         // Warnings & Errors
-        'already_applied' => 'You have already applied for this module. Please wait for approval.',
+        'already_applied' => 'You have already applied for this. Please wait for approval.',
         'action_failed' => 'An error occurred. Please try again.',
-        
+        'module_request_exist' => 'A request with this module already exists.',
         // Confirmation Modals
         'confirm_approve' => 'Are you sure you want to approve this access?',
+    ],
+
+    'roles' => [
+        'super_admin' => 'Super Admin',
+        'admin' => 'Admin',
+        'user' => 'User',
+        'viewer' => 'Viewer'
     ],
 
     //resources
@@ -60,10 +67,13 @@ return [
             'unit' => 'Unit',
             'agency_name' => 'Agency Name',
             'user_category' => 'User Category',
-            'status' => 'Status'
+            'status' => 'Status',
+            'user_profile' => 'User Profile',
+            
         ],
     ],
     'module' => [
+        'choose_role' => 'Choose Role',
         'list_available' => 'List of Available Modules',
         'purpose_request' => 'Purpose of Request',
         'columns' => [
@@ -71,6 +81,7 @@ return [
             'created_at' => 'Date Requested',
             'purpose' => 'Purpose',
             'name' => 'Module Name',
+            'role_assigned' => "Assigned Role",
         ],
     ],
 
