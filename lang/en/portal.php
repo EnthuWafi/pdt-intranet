@@ -1,6 +1,23 @@
 <?php
 
 return [
+
+    'organization_name' => 'Manjung District and Land',
+    'organization_shortform' => 'PDT Manjung',
+    'portal_name' => 'Intranet Portal',
+
+    'help' => 'Help',
+    'faq' => "FAQ",
+    'contact' => 'Contact',
+
+    'unknown' => 'Unknown',
+
+    'online' => 'Online',
+    'offline' => 'Offline',
+
+    'hello' => 'Hello',
+    
+    'version' => 'Version',
     
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',

@@ -2,6 +2,7 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/*';
 @source '../../../../vendor/bezhansalleh/filament-language-switch/**';
 
 @source './resources/views/filament/**/*.blade.php';

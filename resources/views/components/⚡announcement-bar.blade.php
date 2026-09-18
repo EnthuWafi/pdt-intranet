@@ -14,51 +14,112 @@ new class extends Component
 };
 ?>
 
-
-
 <div>
     {{-- The biggest battle is the war against ignorance. - Mustafa Kemal Atatürk --}}
+    <!-- We move the poll up to the root level container -->
+    <style scoped>
+        @keyframes dynamic-marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+    </style>
     <div wire:poll.60s class="bg-amber-400 text-neutral-900 border-b border-amber-500 overflow-hidden text-xs">
-    @if($this->announcements->isNotEmpty())
-        <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center gap-3">
-            <span class="font-bold uppercase tracking-wider text-[10px] bg-neutral-900 text-white px-2 py-0.5 rounded">
-                Pengumuman
-            </span>
+    
+    <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center gap-3">
+        <!-- Label -->
+        <span class="z-10 font-bold uppercase tracking-wider text-[10px] bg-neutral-900 text-white px-2 py-0.5 rounded shadow-sm shrink-0">
+            Pengumuman
+        </span>
 
-            {{-- Alpine.js Ticker --}}
+        <!-- Dynamic Marquee Wrapper -->
+        <div 
+            class="relative flex-1 overflow-hidden"
+            x-data="{ 
+                isHovered: false,
+                speed: 40,
+                speedMultiplier: 60,
+                init() {
+                    this.adjustTrack();
+                    
+                    // Trigger recalculations only when the tab becomes active again
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) {
+                            this.adjustTrack();
+                        }
+                    });
+
+                    // Listens for Livewire refreshes cleanly without scrambling DOM trees
+                    Livewire.hook('morph.updated', () => {
+                        this.adjustTrack();
+                    });
+                },
+                adjustTrack() {
+                    this.$nextTick(() => {
+                        let singleTrack = this.$refs.singleTrack;
+                        let marqueeTrack = this.$refs.marqueeTrack;
+                        let wrapper = this.$root;
+                        
+                        if (!singleTrack || !marqueeTrack || !wrapper) return;
+
+                        // Safely remove previous loop clones without touching Livewire elements
+                        let clones = marqueeTrack.querySelectorAll('.marquee-clone');
+                        clones.forEach(c => c.remove());
+
+                        let singleWidth = singleTrack.offsetWidth;
+                        let wrapperWidth = wrapper.offsetWidth;
+                        
+                        // If browser tab throttling returns 0, retry briefly after rendering catches up
+                        if (singleWidth === 0) {
+                            setTimeout(() => this.adjustTrack(), 100);
+                            return;
+                        }
+
+                        // Determine duplication density loops
+                        let neededClones = Math.ceil((wrapperWidth * 2) / singleWidth);
+                        neededClones = Math.max(neededClones, 1);
+
+                        // Inject content mirror copies safely
+                        for (let i = 0; i < neededClones; i++) {
+                            let clone = singleTrack.cloneNode(true);
+                            clone.classList.add('marquee-clone');
+                            clone.removeAttribute('x-ref'); // Strip structural refs to avoid tracking conflict
+                            clone.setAttribute('aria-hidden', 'true');
+                            marqueeTrack.appendChild(clone);
+                        }
+
+                        // Reset velocity rules dynamically
+                        let totalWidth = marqueeTrack.offsetWidth;
+                        this.speed = Math.max(Math.round(totalWidth / this.speedMultiplier), 10);
+                    });
+                }
+            }"
+            @mouseenter="isHovered = true"
+            @mouseleave="isHovered = false"
+        >
+            <!-- wire:ignore stops Livewire from rewriting or clearing our runtime modifications -->
             <div 
-                x-data="{ 
-                    active: 0, 
-                    total: {{ $this->announcements->count() }},
-                    next() { this.active = (this.active + 1) % this.total }
+                x-ref="marqueeTrack"
+                wire:ignore
+                class="flex w-max min-w-full whitespace-nowrap"
+                :style="{ 
+                    animation: 'dynamic-marquee ' + speed + 's linear infinite', 
+                    animationPlayState: isHovered ? 'paused' : 'running' 
                 }"
-                x-init="if (total > 1) setInterval(() => next(), 5000)"
-                class="relative h-5 overflow-hidden flex-1"
             >
-                @foreach($this->announcements as $index => $announcement)
-                    <div 
-                        x-show="active === {{ $index }}"
-                        x-transition:enter="transition ease-out duration-300 transform"
-                        x-transition:enter-start="translate-y-4 opacity-0"
-                        x-transition:enter-end="translate-y-0 opacity-100"
-                        x-transition:leave="transition ease-in duration-200 transform"
-                        x-transition:leave-start="translate-y-0 opacity-100"
-                        x-transition:leave-end="-translate-y-4 opacity-0"
-                        class="absolute inset-0 flex items-center font-medium truncate"
-                    >
-                        {{ $announcement->message }}
-                    </div>
-                @endforeach
+                <!-- Base Announcement Track -->
+                <div x-ref="singleTrack" class="flex items-center gap-12 pr-12">
+                    @if($this->announcements->isNotEmpty())
+                        @foreach($this->announcements as $announcement)
+                            <span class="font-medium flex items-center gap-2">
+                                📢 {{ $announcement->message }}
+                            </span>
+                        @endforeach
+                    @else
+                        <span class="font-medium">Tiada pengumuman buat masa ini.</span>
+                    @endif
+                </div>
             </div>
         </div>
-    @else
-        <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center gap-3">
-            <span class="font-bold uppercase tracking-wider text-[10px] bg-neutral-500 text-white px-2 py-0.5 rounded not-italic">
-                Pengumuman
-            </span>
-            
-            <span>No announcements currently.</span>
-        </div>
-    @endif
+    </div>
     </div>
 </div>

@@ -11,53 +11,85 @@
 
 
 <livewire:announcement-bar />
-<!-- TODO: Make this Dark Mode properly later -->
-<div class="border-none border-gray-200 rounded-2xl shadow-sm p-6 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6">
+<div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm p-6 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6">
     
-    <div class="flex items-center gap-5">
-        <img src="{{ Vite::asset('resources/images/perak.webp') }}" alt="Crest" class="h-24 w-24 object-contain drop-shadow-md">
+    {{-- Left: Brand & Crest --}}
+    <div class="flex items-center gap-5 w-full lg:w-auto">
+        <img src="{{ Vite::asset('resources/images/perak.webp') }}" alt="Crest" class="h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-md shrink-0">
         <div>
-            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-1">Portal Intranet PDT Manjung</h1>
-            <p class="text-sm font-semibold text-gray-600 mb-2">Pejabat Daerah dan Tanah Manjung</p>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300">
-                Version 1
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">
+                {{ __('portal.portal_name') }} {{ __('portal.organization_shortform') }}
+            </h1>
+            <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                {{ __('portal.organization_name') }}
+            </p>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700">
+                {{ __('portal.version') }} 1.0
             </span>
         </div>
     </div>
 
-    <div class="flex items-center gap-4">
+    {{-- Right: Profile Card & Action Quicklinks --}}
+    <div class="flex items-center justify-end gap-3 w-full lg:w-auto">
         
-        <!-- Profile Card -->
-        <div class="border-gray-200 rounded-xl p-3 shadow-sm flex items-center gap-4 max-w-sm">
-            <div class="h-12 w-12 rounded-full bg-gray-200 border-2 border-yellow-400 overflow-hidden shrink-0">
-                <img src="{{ auth()->user()->getFilamentAvatarUrl() }}" class="w-full h-full" >
+        {{-- Profile Card --}}
+        <a 
+            href="{{ filament()->getProfileUrl() }}" 
+            class="group border border-gray-200 dark:border-gray-800 hover:border-yellow-400 dark:hover:border-yellow-500 bg-gray-50 dark:bg-gray-800/60 hover:bg-yellow-50/30 dark:hover:bg-yellow-950/20 rounded-xl p-3 shadow-sm flex items-center gap-3 w-full sm:w-80 min-w-[280px] transition ease-in-out duration-150 shrink-0"
+        >
+            <div class="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-yellow-400 overflow-hidden shrink-0 shadow-inner">
+                <img src="{{ auth()->user()->getFilamentAvatarUrl() }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
             </div>
-            <div>
-                <div class="flex items-center justify-between mb-1">
-                    <strong class="text-sm text-gray-900 truncate block">Hi, {{ auth()->user()->name ?? 'Amirah binti Abdul Rashid' }}</strong>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 border border-green-200 text-[10px] font-bold text-green-700">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> DALAM TALIAN
+            
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1 mb-1">
+                    <strong class="text-xs font-bold text-gray-900 dark:text-white truncate block group-hover:text-yellow-700 dark:group-hover:text-yellow-400">
+                        {{ __('portal.hello') }}, {{ auth()->user()->name }}
+                    </strong>
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-[9px] font-extrabold text-green-700 dark:text-green-300 shrink-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {{ __('portal.online') }}
                     </span>
                 </div>
-                <p class="text-[10px] text-gray-500 leading-tight">
-                    {{ auth()->user()->roles->first()->name ?? 'Pentadbir Utama' }}<br>
-                    {{ now()->format('l, d F Y') }}
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
+                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->roles->first()?->name ?? __('portal.unknown') }}</span><br>
+                    {{ now()->translatedFormat('l, d F Y') }}
                 </p>
             </div>
-        </div>
+        </a>
 
-        <div class="flex gap-2">
-            <button class="action-btn bg-[#222222] text-white rounded-xl p-3 flex flex-col items-center justify-center w-[72px] h-[80px]">
-                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 font-bold">?</div>
-                <span class="text-[9px] font-bold tracking-wider">BANTUAN</span>
+        {{-- Action Buttons --}}
+        <div class="hidden sm:flex items-center gap-2">
+            <button 
+                type="button"
+                x-on:click="$dispatch('open-modal', { slug: 'bantuan' })"
+                class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
+            >
+                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
+                    <x-heroicon-o-question-mark-circle class="w-5 h-5 text-neutral-900 stroke-2" />
+                </div>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.help') }}</span>
             </button>
-            <button class="action-btn bg-[#222222] text-white rounded-xl p-3 flex flex-col items-center justify-center w-[72px] h-[80px]">
-                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 font-bold">≡</div>
-                <span class="text-[9px] font-bold tracking-wider">FAQ</span>
+
+            <button 
+                type="button"
+                x-on:click="$dispatch('open-modal', { slug: 'faq' })"
+                class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
+            >
+                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
+                    <x-heroicon-o-chat-bubble-left-right class="w-5 h-5 text-neutral-900 stroke-2" />
+                </div>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.faq') }}</span>
             </button>
-            <button class="action-btn bg-[#222222] text-white rounded-xl p-3 flex flex-col items-center justify-center w-[72px] h-[80px]">
-                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 font-bold">☎</div>
-                <span class="text-[9px] font-bold tracking-wider">HUBUNGI</span>
+
+            <button 
+                type="button"
+                x-on:click="$dispatch('open-modal', { slug: 'hubungi-kami' })"
+                class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
+            >
+                <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
+                    <x-heroicon-o-phone class="w-5 h-5 text-neutral-900 stroke-2" />
+                </div>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.contact') }}</span>
             </button>
         </div>
 

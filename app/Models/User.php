@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
@@ -54,16 +55,28 @@ class User extends Authenticatable implements HasMedia, HasAvatar
         return $this->hasMany(ModuleRequest::class);
     }
 
+    //avatar upload
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
+            ->useDisk('public')
             ->singleFile()
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']);
     }
 
+    //thumb compress
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(150)
+            ->height(150)
+            ->quality(80)
+            ->nonQueued();
+    }
+
     public function getFilamentAvatarUrl(): ?string
     {
-        if ($avatar = $this->getFirstMediaUrl('avatar')) {
+        if ($avatar = $this->getFirstMediaUrl('avatar', 'thumb')) {
             return $avatar;
         }
 
