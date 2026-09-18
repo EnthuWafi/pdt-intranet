@@ -253,7 +253,14 @@ return [
     |
     */
 
-    'custom_permissions' => [],
+    'custom_permissions' => [
+        'ViewAny:PortalPage',
+        'Update:PortalPage',
+
+        'ViewAny:PortalSetting',
+        'Update:PortalSetting',
+        
+    ],
 
     /*
     |--------------------------------------------------------------------------

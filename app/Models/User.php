@@ -78,7 +78,8 @@ class User extends Authenticatable implements HasMedia, HasAvatar
         ], encoding_type: PHP_QUERY_RFC3986);
     }
 
-    public function getAvatarColors(): array
+    //colors
+    private function getAvatarColors(): array
     {
         $bg = substr(md5($this->name), 0, 6);
 

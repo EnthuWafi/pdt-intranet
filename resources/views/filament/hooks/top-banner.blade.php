@@ -9,6 +9,8 @@
     }
 </style>
 
+
+<livewire:announcement-bar />
 <!-- TODO: Make this Dark Mode properly later -->
 <div class="border-none border-gray-200 rounded-2xl shadow-sm p-6 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6">
     
