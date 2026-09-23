@@ -22,6 +22,19 @@ class ModuleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.groups.user_management');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('modules.resource.label');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('modules.resource.plural_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ModuleForm::configure($schema);

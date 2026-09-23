@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Faqs\Pages;
+namespace App\Filament\Resources\Units\Pages;
 
-use App\Filament\Resources\Faqs\FaqResource;
+use App\Filament\Resources\Units\UnitResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditFaq extends EditRecord
+class EditUnit extends EditRecord
 {
-    protected static string $resource = FaqResource::class;
+    protected static string $resource = UnitResource::class;
 
     protected function getHeaderActions(): array
     {

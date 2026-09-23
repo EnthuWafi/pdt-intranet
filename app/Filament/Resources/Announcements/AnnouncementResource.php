@@ -22,6 +22,20 @@ class AnnouncementResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.groups.system_management');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('announcement.resource.label');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('announcement.resource.plural_label');
+    }
+
+
     public static function form(Schema $schema): Schema
     {
         return AnnouncementForm::configure($schema);

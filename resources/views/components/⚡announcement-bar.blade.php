@@ -110,8 +110,11 @@ new class extends Component
                 <div x-ref="singleTrack" class="flex items-center gap-12 pr-12">
                     @if($this->announcements->isNotEmpty())
                         @foreach($this->announcements as $announcement)
-                            <span class="font-medium flex items-center gap-2">
-                                📢 {{ $announcement->message }}
+                        <span class="font-medium flex items-center gap-2" style="color: var(--{{ $announcement->type->getColor() }}-600);">
+                                @svg($announcement->type->getIcon(), 'w-5 h-5 text-custom-600')
+                                <span class="text-gray-800">
+                                    {{ $announcement->type->getLabel() }} - {{ $announcement->title }}
+                                </span>
                             </span>
                         @endforeach
                     @else

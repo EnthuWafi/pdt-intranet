@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\ModuleStatus;
+use App\Models\ActivityLog;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -23,6 +24,22 @@ class MyAccess extends Page
     protected string $view = 'filament.pages.my-access';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
+    protected static ?int $navigationSort = 1;
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.groups.my_work');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('my_access.title');
+    }
+
+    public function getTitle(): string
+    {
+        return __('my_access.title');
+    }
+
     public ?array $data = [];
     public function mount(): void
     {
@@ -36,7 +53,7 @@ class MyAccess extends Page
                 Form::make([
                     //check box list for pickin shit
                     CheckboxList::make('module_ids')
-                        ->label(__('portal.module.list_available'))
+                        ->label(__('modules.requests.list_available'))
                         ->options(
                             Module::where('is_active', true)
                             ->whereDoesntHave('moduleRequests', function ($query) {
@@ -49,7 +66,7 @@ class MyAccess extends Page
                         ->required(),
                         
                     Textarea::make('purpose')
-                        ->label(__('portal.module.purpose_request'))
+                        ->label(__('modules.requests.purpose_request'))
                         ->required()
                         ->rows(3),
                 ])
@@ -57,7 +74,7 @@ class MyAccess extends Page
                 ->footer([
                     Actions::make([
                         Action::make('save')
-                            ->label(__('portal.actions.apply'))
+                            ->label(__('common.actions.apply'))
                             ->submit('save')
                             ->color('primary')
                             ->extraAttributes(['class' => 'mb-6']), 
@@ -89,12 +106,16 @@ class MyAccess extends Page
                         ]);
                     }
 
-                    ModuleRequest::create([
+                    $request = ModuleRequest::create([
                         'user_id' => auth()->id(),
                         'module_id' => $moduleId,
                         'purpose' => $data['purpose'],
                         'status' => ModuleStatus::PENDING->value, 
                     ]);
+
+
+                    //TODO: Make notification, action item, and add to activity log
+                    
                 }
                     
                 $this->form->fill();

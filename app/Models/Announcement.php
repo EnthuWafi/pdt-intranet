@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnnouncementType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -10,7 +11,11 @@ class Announcement extends Model
     //
     protected $guarded = [];
 
-
+    protected function casts(): array {
+      return [
+        'type' => AnnouncementType::class
+      ];
+    }
     //old way
     // public function scopeActive($query)
     // {

@@ -36,6 +36,15 @@ return [
         'cancel' => 'Cancel',
     ],
 
+    'activity_event' => [
+        'created'   => 'Created',
+        'updated'   => 'Updated',
+        'deleted'   => 'Deleted',
+        'requested' => 'Requested',
+        'approved'  => 'Approved',
+        'rejected'  => 'Rejected',
+    ],
+
     'messages' => [
         // Success toasts
         'request_submitted' => 'Your access request has been submitted successfully.',
@@ -50,6 +59,8 @@ return [
         'confirm_approve' => 'Are you sure you want to approve this access?',
     ],
 
+    
+
     'roles' => [
         'super_admin' => 'Super Admin',
         'admin' => 'Admin',
@@ -63,7 +74,7 @@ return [
         'status' => [
             'pending' => 'Pending Approval',
             'active' => 'Active',
-            'suspended' => 'Digantung',
+            'suspended' => 'Suspended',
         ],
         'category' => [
             'internal' => 'Internal',
@@ -101,6 +112,24 @@ return [
             'role_assigned' => "Assigned Role",
         ],
     ],
+
+    'announcement' => [
+        'type' => [
+            'info' => 'Infomation',
+            'success' => 'Success',
+            'danger' => 'Danger',
+            'warning' => 'Warning',
+        ],
+        'columns' => [
+            'starts_at' => 'Starts At',
+            'expires_at' => 'Expires At',
+            'type' => 'Type',
+            'title' => 'Title',
+            'content' => 'Content',
+            'is_active' => 'Is Active',
+
+        ]
+    ]
 
 
 ];

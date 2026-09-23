@@ -3,12 +3,14 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+// use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -35,6 +37,16 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Amber,
+                'gray' => Color::Gray,
+                'danger'  => Color::Red,
+                'warning' => Color::Amber, 
+                'success' => Color::Emerald,
+                'info'    => Color::Sky,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()->label(__('navigation.groups.main')),
+                NavigationGroup::make()->label(__('navigation.groups.my_work')),
+                NavigationGroup::make()->label(__('navigation.groups.system_management')),
             ])
             ->profile(EditProfile::class)
             ->brandName('Portal Intranet')

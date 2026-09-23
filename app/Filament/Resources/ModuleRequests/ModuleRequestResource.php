@@ -20,6 +20,20 @@ class ModuleRequestResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.groups.user_management');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('modules.requests.resource.label');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('modules.requests.resource.plural_label');
+    }
+
+
     // public static function form(Schema $schema): Schema
     // {
     //     return ModuleRequestForm::configure($schema);
@@ -45,6 +59,8 @@ class ModuleRequestResource extends Resource
             // 'edit' => EditModuleRequest::route('/{record}/edit'),
         ];
     }
+
+    
 
     public static function canCreate(): bool
     {

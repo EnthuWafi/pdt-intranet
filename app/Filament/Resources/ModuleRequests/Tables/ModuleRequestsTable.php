@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\ModuleRequests\Tables;
 
+use App\Enums\ActivityEvent;
 use App\Enums\ExternalModuleRole;
+use App\Models\ActivityLog;
 use App\Models\ModuleRequest;
 use Exception;
 use Filament\Actions\BulkActionGroup;
@@ -76,14 +78,18 @@ class ModuleRequestsTable
                                     ->required(),
                             ];
                         }
+                        else
+                        {
+                            // External: show notice or external role field
+                            return [
+                                Select::make('role')
+                                ->label(__('portal.module.choose_role'))
+                                ->options(ExternalModuleRole::class)
+                                ->required()
+                            ];
+                        }
 
-                        // External: show notice or external role field
-                        return [
-                            Select::make('role')
-                            ->label(__('portal.module.choose_role'))
-                            ->options(ExternalModuleRole::class)
-                            ->required()
-                        ];
+                        
                     })
                     ->visible(fn ($record) => $record->status === ModuleStatus::PENDING)
                     ->action(function (ModuleRequest $record, array $data) {
@@ -94,6 +100,14 @@ class ModuleRequestsTable
                                 $record->user->assignRole($data['roles'] ?? []);
 
                                 $record->update(['status' => ModuleStatus::APPROVED]);
+
+                                ActivityLog::log(
+                                    event: ActivityEvent::APPROVED,
+                                    description: "Meluluskan permohonan modul {$record->module->name} untuk {$record->user->name}",
+                                    subject: $record
+                                );
+
+                                // $record->user->notify(new ModuleRequestApprovedNotification($record->module));
 
                                 Notification::make()
                                     ->title(__('portal.messages.access_approved'))

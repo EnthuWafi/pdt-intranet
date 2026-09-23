@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\ModuleStatus;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\ModuleRequest;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -70,6 +71,21 @@ class ModuleRequestPolicy
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:ModuleRequest');
+    }
+
+    public function approve(AuthUser $authUser, ModuleRequest $moduleRequest): bool
+    {
+        return $authUser->can('Update:ModuleRequest') 
+            && $moduleRequest->status === ModuleStatus::PENDING;
+    }
+
+    /**
+     * Determine whether the user can reject a module request.
+     */
+    public function reject(AuthUser $authUser, ModuleRequest $moduleRequest): bool
+    {
+        return $authUser->can('Update:ModuleRequest') 
+            && $moduleRequest->status === ModuleStatus::PENDING;
     }
 
 }

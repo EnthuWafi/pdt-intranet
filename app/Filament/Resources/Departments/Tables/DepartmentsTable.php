@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Faqs\Tables;
+namespace App\Filament\Resources\Departments\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -8,17 +8,12 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class FaqsTable
+class DepartmentsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('question')
-                    ->searchable(),
-                TextColumn::make('order')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -27,6 +22,8 @@ class FaqsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('name')
+                    ->searchable(),
             ])
             ->filters([
                 //
