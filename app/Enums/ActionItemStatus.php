@@ -8,8 +8,8 @@ enum ActionItemStatus: string implements HasLabel, HasColor, HasIcon
 {
     //
     case PENDING_APPROVAL = "pending_approval"; ///default
-    case PENDING_REVIEW = "pending_review"; //not to be confused for pending approval, 
-                                            // this is only to confirm review
+    // case PENDING_REVIEW = "pending_review"; //not to be confused for pending approval, 
+                                            // this is only to confirm review (actually scrap this)
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
 

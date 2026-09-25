@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Contacts\HasActionUrl;
+use App\Enums\ActionType;
+use App\Filament\Resources\ModuleRequests\ModuleRequestResource;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ModuleStatus;
 use Illuminate\Validation\ValidationException;
 
-class ModuleRequest extends Model
+class ModuleRequest extends Model implements HasActionUrl
 {
     //
     protected $guarded = [];
@@ -37,9 +40,31 @@ class ModuleRequest extends Model
 
             if ($exists) {
                 throw ValidationException::withMessages([
-                    'module_id' => __('portal.messages.module_request_exist'),
+                    'module_id' => __('modules.messages.module_request_exist'),
                 ]);
             }
         });
+    }
+
+    public function getActionUrl(ActionItem $item): string
+    {
+        $parameters = [
+            'tableActionRecord' => $this->id,
+        ];
+        $actionName = match ($item->action_type) {
+            ActionType::APPROVE => 'approve',
+            ActionType::REVIEW  => 'approve',
+            default             => null,
+        };
+
+        if ($actionName) {
+            $parameters['tableAction'] = $actionName;
+        }
+
+        if ($this->relationLoaded('user') && $this->user) {
+            $parameters['tableSearch'] = $this->user->name;
+        }
+
+        return ModuleRequestResource::getUrl('index', $parameters);
     }
 }

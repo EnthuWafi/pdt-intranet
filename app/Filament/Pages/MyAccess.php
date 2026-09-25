@@ -24,7 +24,7 @@ class MyAccess extends Page
     protected string $view = 'filament.pages.my-access';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.groups.my_work');

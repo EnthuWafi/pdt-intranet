@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\ActionItemStatus;
 use App\Enums\ActivityEvent;
-use App\Enums\ModuleStatus;
+use App\Models\ActionItem;
 use App\Models\ActivityLog;
-use App\Models\ModuleRequest;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ActionInbox extends Page implements HasTable
 {
@@ -43,101 +44,32 @@ class ActionInbox extends Page implements HasTable
         return auth()->check();
     }
 
-    // public static function canAccess(): bool
-    // {
-    //     return auth()->user()?->can('viewAny', ModuleRequest::class) ?? false;
-    // }
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(ActionItem::query()->forUser(auth()->user()))
+            ->emptyStateHeading(__('action_inbox.empty'))
+            ->columns([
+                TextColumn::make('title')
+                ->label(__('action_inbox.fields.title'))
+                ->weight('bold')
+                ->searchable(),
 
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     $count = ModuleRequest::where('status', ModuleStatus::PENDING)->count();
+                TextColumn::make('action_type')
+                    ->label(__('action_inbox.fields.type'))
+                    ->badge(),
 
-    //     return $count > 0 ? (string) $count : null;
-    // }
+                TextColumn::make('assignedTo.name')
+                    ->label(__('action_inbox.fields.assigned_to'))
+                    ->placeholder(__('action_inbox.status.unassigned')),
 
-    // public static function getNavigationBadgeColor(): ?string
-    // {
-    //     return 'danger';
-    // }
-
-    // public function table(Table $table): Table
-    // {
-    //     return $table
-    //         ->query(
-    //             ModuleRequest::query()
-    //                 ->with(['user', 'module'])
-    //                 ->where('status', ModuleStatus::PENDING)
-    //         )
-    //         ->emptyStateHeading(__('portal.empty.action_inbox'))
-    //         ->columns([
-    //             TextColumn::make('user.name')
-    //                 ->label(__('portal.fields.applicant'))
-    //                 ->searchable()
-    //                 ->sortable(),
-
-    //             TextColumn::make('module.name')
-    //                 ->label(__('portal.fields.module'))
-    //                 ->badge()
-    //                 ->color('warning'),
-
-    //             TextColumn::make('purpose')
-    //                 ->label(__('portal.fields.purpose'))
-    //                 ->limit(50)
-    //                 ->tooltip(fn ($record) => $record->purpose),
-
-    //             TextColumn::make('created_at')
-    //                 ->label(__('portal.fields.requested_at'))
-    //                 ->dateTime('d M Y, h:i A')
-    //                 ->sortable(),
-    //         ])
-    //         ->actions([
-    //             Action::make('approve')
-    //                 ->label(__('portal.actions.approve'))
-    //                 ->icon('heroicon-m-check')
-    //                 ->color('success')
-    //                 ->requiresConfirmation()
-    //                 ->authorize(fn (ModuleRequest $record) => auth()->user()->can('approve', $record))
-    //                 ->action(function (ModuleRequest $record): void {
-    //                     $record->update(['status' => ModuleStatus::APPROVED]);
-
-    //                     ActivityLog::log(
-    //                         event: ActivityEvent::APPROVED,
-    //                         description: __('portal.notifications.log_approved', [
-    //                             'module' => $record->module->name,
-    //                             'user' => $record->user->name,
-    //                         ]),
-    //                         subject: $record
-    //                     );
-
-    //                     Notification::make()
-    //                         ->title(__('portal.notifications.approved_title'))
-    //                         ->success()
-    //                         ->send();
-    //                 }),
-
-    //             Action::make('reject')
-    //                 ->label(__('portal.actions.reject'))
-    //                 ->icon('heroicon-m-x-mark')
-    //                 ->color('danger')
-    //                 ->requiresConfirmation()
-    //                 ->authorize(fn (ModuleRequest $record) => auth()->user()->can('reject', $record))
-    //                 ->action(function (ModuleRequest $record): void {
-    //                     $record->update(['status' => ModuleStatus::REJECTED]);
-
-    //                     ActivityLog::log(
-    //                         event: ActivityEvent::REJECTED,
-    //                         description: __('portal.notifications.log_rejected', [
-    //                             'module' => $record->module->name,
-    //                             'user' => $record->user->name,
-    //                         ]),
-    //                         subject: $record
-    //                     );
-
-    //                     Notification::make()
-    //                         ->title(__('portal.notifications.rejected_title'))
-    //                         ->danger()
-    //                         ->send();
-    //                 }),
-    //         ]);
-    // }
+                TextColumn::make('created_at')
+                    ->label(__('action_inbox.fields.received_at'))
+                    ->dateTime('d M Y, h:i A')
+                    ->sortable(),
+                ])
+            ->actions([
+                        
+            ]);
+    }
 }
