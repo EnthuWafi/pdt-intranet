@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('module_requests', function (Blueprint $table) {
             //
-            $table->string('module_name');
+            $table->string('module_name')->nullable();
         });
     }
 };

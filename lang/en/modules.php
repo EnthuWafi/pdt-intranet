@@ -31,5 +31,10 @@ return [
         'already_applied'     => 'You have already applied for this module. Please wait for approval.',
         'module_request_exist'=> 'A request for this module already exists.',
         'confirm_approve'     => 'Are you sure you want to approve this access request?',
+        
     ],
+    'actions' => [
+        'title_request' => 'Access Request: ',
+        'desc_request' => 'Applicant: :applicantname. Justification: :justification.'
+    ]
 ];

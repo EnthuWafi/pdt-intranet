@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Contacts\HasActionUrl;
+use App\Contracts\IsActionable;
 use App\Enums\ActionType;
 use App\Filament\Resources\ModuleRequests\ModuleRequestResource;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ModuleStatus;
 use Illuminate\Validation\ValidationException;
 
-class ModuleRequest extends Model implements HasActionUrl
+class ModuleRequest extends Model implements IsActionable
 {
     //
     protected $guarded = [];
@@ -28,22 +28,6 @@ class ModuleRequest extends Model implements HasActionUrl
     public function module()
     {
         return $this->belongsTo(Module::class);
-    }
-    protected static function booted(): void
-    {
-        static::creating(function (ModuleRequest $request) {
-            $exists = static::query()
-                ->where('user_id', $request->user_id)
-                ->where('module_id', $request->module_id)
-                ->whereIn('status', [ModuleStatus::PENDING, ModuleStatus::APPROVED])
-                ->exists();
-
-            if ($exists) {
-                throw ValidationException::withMessages([
-                    'module_id' => __('modules.messages.module_request_exist'),
-                ]);
-            }
-        });
     }
 
     public function getActionUrl(ActionItem $item): string
@@ -66,5 +50,43 @@ class ModuleRequest extends Model implements HasActionUrl
         }
 
         return ModuleRequestResource::getUrl('index', $parameters);
+    }
+
+    public function handleActionApproval(ActionItem $item, User $user): void
+    {
+        if (!empty($item->payload)) {
+            $this->update($item->payload);
+        }
+
+        $this->update(['status' => ModuleStatus::APPROVED]);
+    }
+
+    public function handleActionRejection(ActionItem $item, User $user, ?string $reason = null): void
+    {
+        $this->update(['status' => ModuleStatus::REJECTED]);
+    }
+
+    public function getRequiredPermissionsFor(ActionType $actionType): array
+    {
+        $rules = match ($actionType) {
+            ActionType::APPROVE => ['Approve:ModuleRequest'],
+            ActionType::REVIEW  => ['Review:ModuleRequest'],
+            default             => [],
+        };
+
+        return [
+            [
+                'type' => 'permission_group',
+                'data' => [
+                    'operator' => 'or',
+                    'rules'    => $rules,
+                ],
+            ],
+        ];
+    }
+
+    public function getActionFormSchema(ActionItem $item): array
+    {
+        return ModuleRequestResource::getFormSchema();
     }
 }

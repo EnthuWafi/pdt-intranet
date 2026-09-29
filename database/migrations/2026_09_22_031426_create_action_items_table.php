@@ -38,7 +38,7 @@ return new class extends Migration
             $table->text('description')->nullable();
 
 
-            $table->string('action_type')->default(ActionType::VIEW);
+            $table->string('action_type')->default('view');
             $table->string('status')->default(ActionItemStatus::PENDING_APPROVAL->value);
 
             // Resolution audit trail

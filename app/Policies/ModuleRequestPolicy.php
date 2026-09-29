@@ -72,8 +72,9 @@ class ModuleRequestPolicy
     {
         return $authUser->can('Reorder:ModuleRequest');
     }
-
-    public function approve(AuthUser $authUser, ModuleRequest $moduleRequest): bool
+    
+    //need to have approve for action inbox right...
+       public function approve(AuthUser $authUser, ModuleRequest $moduleRequest): bool
     {
         return $authUser->can('Update:ModuleRequest') 
             && $moduleRequest->status === ModuleStatus::PENDING;

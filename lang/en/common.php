@@ -45,4 +45,7 @@ return [
     'messages' => [
         'action_failed' => 'An unexpected error occurred. Please try again.',
     ],
+    'session' => [
+        'timeleft' => "Time Left"
+    ]
 ];

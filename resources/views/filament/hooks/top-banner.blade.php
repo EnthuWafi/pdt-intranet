@@ -1,5 +1,9 @@
-<style>
+@php
+    //add 5 just to be safe
+    $sessionLifetimeSeconds = (config('session.lifetime') * 60) + 5;
+@endphp
 
+<style>
     .action-btn {
         transition: all 0.2s ease;
     }
@@ -52,7 +56,39 @@
                 </div>
                 <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
                     <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->roles->first()?->name ?? __('portal.unknown') }}</span><br>
-                    {{ now()->translatedFormat('l, d F Y') }}
+                    <span>{{ now()->translatedFormat('l, d F Y') }}</span><br>
+                    <span class="font-medium text-blue-700 dark:text-blue-300">{{ __('common.session.timeleft') }}
+
+                    <span x-data="{
+                        timeRemaining: {{ $sessionLifetimeSeconds }},
+                        init() {
+                            setInterval(() => {
+                                if (this.timeRemaining > 0) {
+                                    this.timeRemaining--;
+                                } else {
+                                    window.location.reload();
+                                }
+                            }, 1000);
+                        },
+                        formatTime() {
+
+                            const visualTime = Math.max(0, this.timeRemaining - 5);
+                            const hours = Math.floor(visualTime / 3600);
+                            const minutes = Math.floor((visualTime % 3600) / 60);
+                            const seconds = visualTime % 60;
+                            
+                            let display = '';
+                            if (hours > 0) display += hours + ':';
+                            display += minutes.toString().padStart(2, '0') + ':';
+                            display += seconds.toString().padStart(2, '0');
+                            
+                            return display;
+                        }
+                    }" 
+                    x-text="formatTime()" 
+
+                    </span>
+                    </span>
                 </p>
             </div>
         </a>

@@ -28,28 +28,28 @@ class ModuleRequestsTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label(__('portal.user.columns.name'))
+                    ->label(__('user.columns.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('module.name')
-                    ->label(__('portal.module.columns.name'))
+                    ->label(__('modules.columns.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('purpose')
-                    ->label('Tujuan Permohonan')
+                    ->label(__('modules.columns.purpose'))
                     ->wrap()
                     ->size(TextSize::Small)
                     ->searchable(),
 
                 TextColumn::make('status')
-                    ->label(__('portal.module.columns.status'))
+                    ->label(__('modules.columns.status'))
                     ->badge()
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->label(__('portal.module.columns.created_at'))
+                    ->label(__('modules.columns.created_at'))
                     ->dateTime('d/m/Y h:i A')
                     ->sortable(),
             ])
@@ -110,13 +110,13 @@ class ModuleRequestsTable
                                 // $record->user->notify(new ModuleRequestApprovedNotification($record->module));
 
                                 Notification::make()
-                                    ->title(__('portal.messages.access_approved'))
+                                    ->title(__('modules.messages.access_approved'))
                                     ->success()
                                     ->send();
                             }
                             catch (Exception $e) {
                                 Notification::make()
-                                ->title(__('portal.messages.action_failed'))
+                                ->title(__('common.messages.action_failed'))
                                 ->danger()
                                 ->send();
                             }                
@@ -128,7 +128,7 @@ class ModuleRequestsTable
                             ]);
 
                             Notification::make()
-                                    ->title(__('portal.messages.access_approved'))
+                                    ->title(__('modules.messages.access_approved'))
                                     ->success()
                                     ->send();
                         }
@@ -145,7 +145,7 @@ class ModuleRequestsTable
                         $record->update(['status' => ModuleStatus::REJECTED]);
 
                         Notification::make()
-                            ->title(__('portal.messages.access_rejected'))
+                            ->title(__('modules.messages.access_rejected'))
                             ->danger()
                             ->send();
                     }),

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contacts\HasActionUrl;
+use App\Contracts\IsActionable;
 use App\Enums\ActionItemStatus;
 use App\Enums\ActionType;
 use DB;
@@ -63,6 +64,7 @@ class ActionItem extends Model
         $this->update(['assigned_to_user_id' => null]);
     }
 
+
     public function userCanSeeAction(array $userPermissions): bool
     {
         $blocks = $this->required_permissions ?? [];
@@ -97,105 +99,192 @@ class ActionItem extends Model
      */
     public function scopeForUser(Builder $query, User $user): Builder
     {
+        if ($user->can('viewAny', ActionItem::class)) {
+            return $query;
+        }
+
         $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
 
-        $allowedIds = static::query()
-            ->where('status', ActionItemStatus::PENDING_APPROVAL)
-            ->where(function (Builder $subQuery) use ($user) {
-                $subQuery->where('assigned_to_user_id', $user->id)
-                    ->orWhereNull('assigned_to_user_id');
-            })
-            ->get()
-            ->filter(function (self $item) use ($user, $userPermissions): bool {
-                // If directly assigned to this user, bypass permission checks
-                if ($item->assigned_to_user_id === $user->id) {
-                    return true;
-                }
-
-                return $item->userCanSeeAction($userPermissions);
-            })
+        $allowedPoolIds = static::query()
+            ->whereNull('assigned_to_user_id')
+            ->get(['id', 'required_permissions'])
+            ->filter(fn (self $item): bool => $item->userCanSeeAction($userPermissions))
             ->pluck('id');
 
-        return $query->whereIn($this->qualifyColumn('id'), $allowedIds);
-    }
-
-    // For suboordinate
-    public function submitReview(User $officer, ?array $payload = null): self
-    {
-        return DB::transaction(function () use ($officer, $payload) {
-            $this->update([
-                'payload' => $payload ?? $this->payload,
-                'status' => ActionItemStatus::COMPLETED,
-                'completed_by_user_id' => $officer->id,
-                'completed_at' => now(),
-            ]);
-
-            // Create manager review task
-            return static::create([
-                'assigned_to_user_id' => $officer->manager_id,
-                'actionable_type' => $this->actionable_type,
-                'actionable_id' => $this->actionable_id,
-                'title' => __('action_inbox.titles.manager_approval', ['item' => $this->title]),
-                'action_type' => ActionType::REVIEW,
-                'payload' => $payload ?? $this->payload,
-                'status' => ActionItemStatus::PENDING_APPROVAL,
-            ]);
+        // Combine direct ownership checks with authorized pool IDs
+        return $query->where(function (Builder $subQuery) use ($user, $allowedPoolIds) {
+            $subQuery->where('assigned_to_user_id', $user->id)
+                ->orWhere('assigned_by_user_id', $user->id)
+                ->orWhere('completed_by_user_id', $user->id)
+                ->orWhereIn($this->qualifyColumn('id'), $allowedPoolIds);
         });
     }
+// -------------------------------------------------------------------------
+    // Polymorphic Workflow Actions
+    // -------------------------------------------------------------------------
 
     /**
-     * Manager approves: applies payload to live record and closes task.
+     * Approver executes final approval: commits staged payload to live record.
      */
-    public function approveReview(User $manager): void
+    public function approve(User $user, ?array $stagedData = null, ?string $notes = null): void
     {
-        DB::transaction(function () use ($manager) {
-            $target = $this->actionable;
-
-            // Apply staged payload changes to production record
-            if (!empty($this->payload)) {
-                $target->update($this->payload);
+        DB::transaction(function () use ($user, $stagedData, $notes) {
+            if (!empty($stagedData)) {
+                $this->payload = array_merge($this->payload ?? [], $stagedData);
             }
 
-            // TODO: after this, check if instance of UseActionUrl and use its function instead
-            // yeah im reusing it
-            if (method_exists($target, 'markApproved')) {
-                $target->markApproved();
+            if ($this->actionable instanceof IsActionable) {
+                $this->actionable->handleActionApproval($this, $user);
             }
 
             $this->update([
-                'status' => ActionItemStatus::COMPLETED,
-                'completed_by_user_id' => $manager->id,
-                'completed_at' => now(),
+                'payload'              => $this->payload,
+                'review_notes'         => $notes ?? $this->review_notes,
+                'status'               => ActionItemStatus::COMPLETED,
+                'completed_by_user_id' => $user->id,
+                'completed_at'         => now(),
             ]);
         });
     }
 
     /**
-     * Manager rejects or sends back for revisions.
+     * Approver executes final rejection.
+     */
+    public function reject(User $user, ?string $reason = null): void
+    {
+        DB::transaction(function () use ($user, $reason) {
+            if ($this->actionable instanceof IsActionable) {
+                $this->actionable->handleActionRejection($this, $user, $reason);
+            }
+
+            $this->update([
+                'status'               => ActionItemStatus::CANCELLED,
+                'review_notes'         => $reason,
+                'completed_by_user_id' => $user->id,
+                'completed_at'         => now(),
+            ]);
+        });
+    }
+
+    public function delegate(User $manager, User $subordinate, ?string $instructions = null): self
+    {
+        return DB::transaction(function () use ($manager, $subordinate, $instructions) {
+            $this->update([
+                'status'               => ActionItemStatus::COMPLETED,
+                'review_notes'         => $instructions,
+                'completed_by_user_id' => $manager->id,
+                'completed_at'         => now(),
+            ]);
+
+            $permissions = $this->actionable instanceof IsActionable
+                ? $this->actionable->getRequiredPermissionsFor(ActionType::REVIEW)
+                : [];
+
+            return static::create([
+                'assigned_to_user_id'  => $subordinate->id,
+                'assigned_by_user_id'  => $manager->id,
+                'actionable_type'      => $this->actionable_type,
+                'actionable_id'        => $this->actionable_id,
+                'title'                => "Review: {$this->title}",
+                'description'          => $instructions,
+                'action_type'          => ActionType::REVIEW,
+                'payload'              => $this->payload,
+                'status'               => ActionItemStatus::PENDING_APPROVAL,
+                'required_permissions' => $permissions,
+            ]);
+        });
+    }
+
+/**
+     * Subordinate finishes review: stages data and spawns approval task for manager.
+     */
+    public function submitReview(User $subordinate, ?array $stagedData = null, ?string $notes = null): self
+    {
+        return DB::transaction(function () use ($subordinate, $stagedData, $notes) {
+            $mergedPayload = array_merge($this->payload ?? [], $stagedData ?? []);
+
+            $this->update([
+                'payload'              => $mergedPayload,
+                'review_notes'         => $notes,
+                'status'               => ActionItemStatus::COMPLETED,
+                'completed_by_user_id' => $subordinate->id,
+                'completed_at'         => now(),
+            ]);
+
+            $targetManagerId = $this->assigned_by_user_id ?? $subordinate->manager_id;
+
+            $permissions = $this->actionable instanceof IsActionable
+                ? $this->actionable->getRequiredPermissionsFor(ActionType::APPROVE)
+                : [];
+
+            return static::create([
+                'assigned_to_user_id'  => $targetManagerId,
+                'assigned_by_user_id'  => $subordinate->id,
+                'actionable_type'      => $this->actionable_type,
+                'actionable_id'        => $this->actionable_id,
+                'title'                => "Approval Sign-off: {$this->title}",
+                'description'          => $notes ?? "Review submitted by {$subordinate->name}.",
+                'action_type'          => ActionType::APPROVE,
+                'payload'              => $mergedPayload,
+                'status'               => ActionItemStatus::PENDING_APPROVAL,
+                'required_permissions' => $permissions,
+            ]);
+        });
+    }
+
+    /**
+     * Manager sends the item back to the subordinate who reviewed it.
      */
     public function returnForRevision(User $manager, string $reason): self
     {
         return DB::transaction(function () use ($manager, $reason) {
             $this->update([
-                'status' => ActionItemStatus::CANCELLED,
-                'review_notes' => $reason,
+                'status'               => ActionItemStatus::CANCELLED,
+                'review_notes'         => $reason,
                 'completed_by_user_id' => $manager->id,
-                'completed_at' => now(),
+                'completed_at'         => now(),
             ]);
 
-            // Reassign back to the officer who submitted it
             return static::create([
-                'assigned_to_user_id' => $this->completed_by_user_id,
-                'actionable_type' => $this->actionable_type,
-                'actionable_id' => $this->actionable_id,
-                'title' => __('action_inbox.titles.revisions_needed', ['item' => $this->title]),
-                'action_type' => ActionType::EDIT,
-                'payload' => $this->payload,
-                'review_notes' => $reason,
-                'status' => ActionItemStatus::PENDING_APPROVAL,
+                'assigned_to_user_id'  => $this->assigned_by_user_id, // Return to subordinate
+                'assigned_by_user_id'  => $manager->id,
+                'actionable_type'      => $this->actionable_type,
+                'actionable_id'        => $this->actionable_id,
+                'title'                => "Revisions Required: {$this->title}",
+                'description'          => $reason,
+                'action_type'          => ActionType::REVISE,
+                'payload'              => $this->payload,
+                'review_notes'         => $reason,
+                'status'               => ActionItemStatus::PENDING_APPROVAL,
             ]);
         });
     }
+
+    /**
+     * Determines whether the current item came from a subordinate review.
+     */
+    public function canBeReturnedForRevision(): bool
+    {
+        // must be an approval step assigned to user
+        if ($this->action_type !== ActionType::APPROVE ||
+            $this->status !== ActionItemStatus::PENDING_APPROVAL ||
+            $this->assigned_to_user_id !== auth()->id()) {
+            return false;
+        }
+
+        // Must have been submitted by someone other than the original applicant
+        $applicantId = $this->actionable?->user_id;
+        if (empty($this->assigned_by_user_id) || $this->assigned_by_user_id === $applicantId) {
+            return false;
+        }
+
+        // must be a subordinate
+        return User::query()
+            ->where('id', $this->assigned_by_user_id)
+            ->where('manager_id', auth()->id())
+            ->exists();
+    }
+
 
     // mark as completed
     public function markAsCompleted(User $resolver): void

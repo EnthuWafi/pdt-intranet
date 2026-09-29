@@ -47,6 +47,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()->label(__('navigation.groups.main')),
                 NavigationGroup::make()->label(__('navigation.groups.my_work')),
                 NavigationGroup::make()->label(__('navigation.groups.system_management')),
+                NavigationGroup::make()->label(__('navigation.groups.user_management')),
+                NavigationGroup::make()->label(__('navigation.groups.parameters')),
             ])
             ->profile(EditProfile::class)
             ->brandName('Portal Intranet')
