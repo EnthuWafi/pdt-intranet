@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ActionItemResource extends Resource
 {
@@ -51,6 +52,12 @@ class ActionItemResource extends Resource
         return ActionItemInfolist::configure($schema);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->forUser(auth()->user());
+    }
+
     public static function table(Table $table): Table
     {
         return ActionItemsTable::configure($table);
@@ -67,9 +74,9 @@ class ActionItemResource extends Resource
     {
         return [
             'index' => ListActionItems::route('/'),
-            'create' => CreateActionItem::route('/create'),
+            // 'create' => CreateActionItem::route('/create'),
             'view' => ViewActionItem::route('/{record}'),
-            'edit' => EditActionItem::route('/{record}/edit'),
+            // 'edit' => EditActionItem::route('/{record}/edit'),
         ];
     }
 }

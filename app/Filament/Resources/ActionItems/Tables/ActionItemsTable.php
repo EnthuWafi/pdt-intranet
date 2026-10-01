@@ -93,6 +93,46 @@ class ActionItemsTable
             ]);
     }
 
+    protected static function getReassignAction(): Action 
+    {
+        return Action::make('reassign')
+            ->label('Reassign')
+            ->icon('heroicon-m-arrows-right-left')
+            ->color('gray')
+            ->visible(fn (ActionItem $record): bool => 
+                $record->status === ActionItemStatus::PENDING_APPROVAL &&
+                (auth()->user()->hasRole('super_admin') || $record->assigned_by_user_id === auth()->id())
+            )
+            ->form([
+                Select::make('new_assignee_id')
+                    ->label('Transfer To')
+                    ->options(fn () => User::where('id', '!=', auth()->id())->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
+
+                Textarea::make('reassignment_reason')
+                    ->label('Reason for Reassignment')
+                    ->placeholder('e.g., Officer on medical leave; workload rebalancing.')
+                    ->required()
+                    ->rows(2),
+            ])
+            ->action(function (ActionItem $record, array $data): void {
+                $newAssignee = User::findOrFail($data['new_assignee_id']);
+
+                // Option A: Log to review notes and update assignee directly
+                $record->update([
+                    'assigned_to_user_id' => $newAssignee->id,
+                    'review_notes' => ($record->review_notes ? $record->review_notes . "\n" : '') .
+                        "Reassigned to {$newAssignee->name} by " . auth()->user()->name . ". Reason: " . $data['reassignment_reason'],
+                ]);
+
+                Notification::make()
+                    ->title("Task successfully transferred to {$newAssignee->name}.")
+                    ->info()
+                    ->send();
+            });
+    }
+
     protected static function getProcessAction(): Action
     {
         return Action::make('process')

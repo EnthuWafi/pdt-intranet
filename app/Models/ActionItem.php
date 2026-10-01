@@ -195,7 +195,7 @@ class ActionItem extends Model
         });
     }
 
-/**
+    /**
      * Subordinate finishes review: stages data and spawns approval task for manager.
      */
     public function submitReview(User $subordinate, ?array $stagedData = null, ?string $notes = null): self
@@ -285,6 +285,37 @@ class ActionItem extends Model
             ->exists();
     }
 
+    /**
+     * Closes the active task as CANCELLED and spawns a successor task for the new assignee.
+     */
+    public function reassign(User $actor, User $newAssignee, string $reason): self
+    {
+        return DB::transaction(function () use ($actor, $newAssignee, $reason) {
+            $previousAssigneeName = $this->assignedTo?->name ?? 'Unassigned Pool';
+
+            // 1. Close current task to preserve historical state
+            $this->update([
+                'status'               => ActionItemStatus::CANCELLED,
+                'review_notes'         => "Reassigned to {$newAssignee->name} by {$actor->name}. Reason: {$reason}",
+                'completed_by_user_id' => $actor->id,
+                'completed_at'         => now(),
+            ]);
+
+            // 2. Spawn replacement task carrying forward existing payload and configuration
+            return static::create([
+                'assigned_to_user_id'  => $newAssignee->id,
+                'assigned_by_user_id'  => $actor->id,
+                'actionable_type'      => $this->actionable_type,
+                'actionable_id'        => $this->actionable_id,
+                'title'                => $this->title,
+                'description'          => "Transferred from {$previousAssigneeName}. Reason: {$reason}",
+                'action_type'          => $this->action_type,
+                'payload'              => $this->payload,
+                'status'               => ActionItemStatus::PENDING_APPROVAL,
+                'required_permissions' => $this->required_permissions,
+            ]);
+        });
+    }
 
     // mark as completed
     public function markAsCompleted(User $resolver): void

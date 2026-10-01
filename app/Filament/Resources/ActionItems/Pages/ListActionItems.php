@@ -75,7 +75,6 @@ class ListActionItems extends ListRecords
                     ])
                 ),
 
-            // TODO: what about cancelled, i think this one can display both completed and canceled
         ];
     }
     protected function getHeaderActions(): array
