@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Contracts\IsActionable;
 use App\Enums\ActionType;
 use App\Filament\Resources\ModuleRequests\ModuleRequestResource;
+use App\Observers\ModuleRequestObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ModuleStatus;
-use Illuminate\Validation\ValidationException;
 
+#[ObservedBy(ModuleRequestObserver::class)]
 class ModuleRequest extends Model implements IsActionable
 {
     //

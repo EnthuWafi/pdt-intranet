@@ -74,14 +74,10 @@ class SpawnActionItemAction extends Action
                 ];
             })
             ->action(function (Model $record, array $data): void {
-                $assigneeId = ($data['assignment_type'] === 'subordinate')
-                    ? $data['assigned_to_user_id']
-                    : null; // null represents the shared pool
 
-                // Pull required permissions from model contract if available
-                $permissions = ($record instanceof IsActionable)
-                    ? $record->getRequiredPermissionsFor(ActionType::REVIEW)
-                    : [];
+                $isPool = $data['assignment_type'] === 'pool';
+                
+                $assigneeId = $isPool ? null : $data['assigned_to_user_id'];
 
                 ActionItem::create([
                     'actionable_type'      => $record->getMorphClass(),
@@ -92,7 +88,7 @@ class SpawnActionItemAction extends Action
                     'description'          => $data['instructions'],
                     'action_type'          => ActionType::REVIEW,
                     'status'               => ActionItemStatus::PENDING_APPROVAL,
-                    'required_permissions' => $permissions,
+                    'required_permissions' => $isPool ? ($data['required_permissions'] ?? []) : [],
                 ]);
 
                 $recipientNotice = $assigneeId

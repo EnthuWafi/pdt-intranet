@@ -10,7 +10,7 @@ enum ActionType : string implements HasLabel, HasColor, HasIcon
     // case EDIT = 'edit'; // waiting for an edit
     case APPROVE = 'approve'; // waiting for approval
     case REVIEW = 'review'; // subordinate needs to review
-    case REVISE      = 'revise';
+    case REVISE = 'revise';
     case ACKNOWLEDGE = 'acknowledge';
 
     public function getLabel(): ?string

@@ -54,9 +54,20 @@ class ActionItem extends Model
         return $this->belongsTo(User::class, 'completed_by_user_id');
     }
 
-    public function claim(User $user): void
+    public function claim(User $user): bool
     {
-        $this->update(['assigned_to_user_id' => $user->id]);
+        return DB::transaction(function () use ($user) {
+            $claimed = static::query()
+                ->where('id', $this->id)
+                ->whereNull('assigned_to_user_id')
+                ->where('status', ActionItemStatus::PENDING_APPROVAL)
+                ->lockForUpdate()
+                ->update([
+                    'assigned_to_user_id' => $user->id,
+                ]);
+
+            return $claimed > 0;
+        });
     }
 
     public function release(): void
@@ -296,7 +307,11 @@ class ActionItem extends Model
             // 1. Close current task to preserve historical state
             $this->update([
                 'status'               => ActionItemStatus::CANCELLED,
-                'review_notes'         => "Reassigned to {$newAssignee->name} by {$actor->name}. Reason: {$reason}",
+                'review_notes'         => __('action_inbox.audit.reassigned_note', [
+                                                'assignee' => $newAssignee->name,
+                                                'actor'    => $actor->name,
+                                                'reason'   => $reason,
+                                            ]),
                 'completed_by_user_id' => $actor->id,
                 'completed_at'         => now(),
             ]);
@@ -308,7 +323,10 @@ class ActionItem extends Model
                 'actionable_type'      => $this->actionable_type,
                 'actionable_id'        => $this->actionable_id,
                 'title'                => $this->title,
-                'description'          => "Transferred from {$previousAssigneeName}. Reason: {$reason}",
+                'description'          => __('action_inbox.audit.transferred_description', [
+                                                'previous' => $previousAssigneeName,
+                                                'reason'   => $reason,
+                                            ]),
                 'action_type'          => $this->action_type,
                 'payload'              => $this->payload,
                 'status'               => ActionItemStatus::PENDING_APPROVAL,

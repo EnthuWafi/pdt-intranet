@@ -25,4 +25,10 @@ return [
         'claimed'  => 'Task has been claimed and assigned to you.',
         'released' => 'Task released back to the departmental pool.',
     ],
+
+    'audit' => [
+        'unassigned_pool'         => 'Shared Pool',
+        'reassigned_note'         => 'Reassigned to :assignee by :actor. Reason: :reason',
+        'transferred_description' => 'Transferred from :previous. Reason: :reason',
+    ]
 ];

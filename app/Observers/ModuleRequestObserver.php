@@ -33,25 +33,19 @@ class ModuleRequestObserver
         //
         $applicant = $moduleRequest->user;
 
+        $rules = $moduleRequest->getRequiredPermissionsFor(ActionType::APPROVE);
+
         ActionItem::create([
             'assigned_to_user_id'  => null,
             'assigned_by_user_id'  => $moduleRequest->user_id,
             'actionable_type'      => ModuleRequest::class,
             'actionable_id'        => $moduleRequest->id,
             'title'                => __('modules.actions.title_request') . $moduleRequest->module->name,
-            'description'          => __('modules.actions.desc_request', 
-            ['applicantname'=>$applicant->name, 'justification'=>$moduleRequest->purpose]),
-            'action_type'          => ActionType::REVIEW,
+            'description'          => __('modules.actions.desc_request', ['applicantname'=>$applicant->name, 
+                                                                        'justification'=>$moduleRequest->purpose]),
+            'action_type'          => ActionType::APPROVE,
             'status'               => ActionItemStatus::PENDING_APPROVAL,
-            'required_permissions' => [
-                [
-                    'type' => 'permission_group',
-                    'data' => [
-                        'operator' => 'or',
-                        'rules' => ['Approve:ModuleRequest', 'Review:ModuleRequest'],
-                    ],
-                ],
-            ],
+            'required_permissions' => $rules,
         ]);
     }
 

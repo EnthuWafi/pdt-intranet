@@ -55,6 +55,17 @@ class User extends Authenticatable implements HasMedia, HasAvatar
         return $this->hasMany(ModuleRequest::class);
     }
 
+    public function subordinates()
+    {
+        return $this->hasMany(User::class, 'manager_id', 'id');
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id', 'user_id');
+    }
+
+
     //avatar upload
     public function registerMediaCollections(): void
     {

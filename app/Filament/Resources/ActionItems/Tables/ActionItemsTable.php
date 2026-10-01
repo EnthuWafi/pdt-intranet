@@ -119,16 +119,11 @@ class ActionItemsTable
             ->action(function (ActionItem $record, array $data): void {
                 $newAssignee = User::findOrFail($data['new_assignee_id']);
 
-                // Option A: Log to review notes and update assignee directly
-                $record->update([
-                    'assigned_to_user_id' => $newAssignee->id,
-                    'review_notes' => ($record->review_notes ? $record->review_notes . "\n" : '') .
-                        "Reassigned to {$newAssignee->name} by " . auth()->user()->name . ". Reason: " . $data['reassignment_reason'],
-                ]);
+                $record->reassign(auth()->user(), $newAssignee, $data['reason']);
 
                 Notification::make()
                     ->title("Task successfully transferred to {$newAssignee->name}.")
-                    ->info()
+                    ->success()
                     ->send();
             });
     }

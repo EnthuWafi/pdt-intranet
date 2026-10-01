@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'info'    => Color::Sky,
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 NavigationGroup::make()->label(__('navigation.groups.main')),
                 NavigationGroup::make()->label(__('navigation.groups.my_work')),
