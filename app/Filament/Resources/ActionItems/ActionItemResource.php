@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActionItems;
 
+use App\Enums\ActionItemStatus;
 use App\Filament\Resources\ActionItems\Pages\CreateActionItem;
 use App\Filament\Resources\ActionItems\Pages\EditActionItem;
 use App\Filament\Resources\ActionItems\Pages\ListActionItems;
@@ -78,5 +79,22 @@ class ActionItemResource extends Resource
             'view' => ViewActionItem::route('/{record}'),
             // 'edit' => EditActionItem::route('/{record}/edit'),
         ];
+    }
+
+    //badge
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getEloquentQuery()
+            ->forUser(auth()->user())
+            ->where('status', ActionItemStatus::PENDING_APPROVAL)
+            ->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
     }
 }

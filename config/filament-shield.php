@@ -20,6 +20,7 @@ return [
     */
 
     'shield_resource' => [
+        'should_register_navigation' => false,
         'slug' => 'shield/roles',
         'show_model_path' => true,
         'cluster' => null,
@@ -27,7 +28,7 @@ return [
             'pages' => true,
             'widgets' => true,
             'resources' => true,
-            'custom_permissions' => false,
+            'custom_permissions' => true,
         ],
     ],
 
@@ -254,11 +255,11 @@ return [
     */
 
     'custom_permissions' => [
-        'ViewAny:PortalPage',
-        'Update:PortalPage',
+        'ViewAny:PortalPage' => 'View Any Portal Page',
+        'Update:PortalPage'  => 'Update Portal Page',
 
-        'ViewAny:PortalSetting',
-        'Update:PortalSetting',
+        'ViewAny:PortalSetting' => 'View Any Portal Setting',
+        'Update:PortalSetting'  => 'Update Portal Setting',
         
     ],
 

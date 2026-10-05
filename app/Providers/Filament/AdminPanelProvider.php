@@ -45,17 +45,49 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                NavigationGroup::make()->label(__('navigation.groups.main')),
-                NavigationGroup::make()->label(__('navigation.groups.my_work')),
-                NavigationGroup::make()->label(__('navigation.groups.system_management')),
-                NavigationGroup::make()->label(__('navigation.groups.user_management')),
-                NavigationGroup::make()->label(__('navigation.groups.parameters')),
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.main'))
+                    ->icon('heroicon-o-home'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.my_work'))
+                    ->icon('heroicon-o-clipboard-document-check'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.user_management'))
+                    ->icon('heroicon-o-users'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.system_management'))
+                    ->icon('heroicon-o-server-stack'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.ai_management'))
+                    ->icon('heroicon-o-sparkles'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.parameters'))
+                    ->icon('heroicon-o-adjustments-horizontal'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.report'))
+                    ->icon('heroicon-o-document-chart-bar'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.maintenance'))
+                    ->icon('heroicon-o-wrench-screwdriver'),
+
+                NavigationGroup::make()
+                    ->label(__('navigation.groups.setting'))
+                    ->icon('heroicon-o-cog-6-tooth'),
+
             ])
             ->profile(EditProfile::class)
             ->brandName('Portal Intranet')
             ->brandLogo(fn () => view('filament.components.brand'))
             ->brandLogoHeight('2.5rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            // ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\Filament\Clusters')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

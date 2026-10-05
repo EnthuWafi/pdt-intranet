@@ -9,6 +9,8 @@ return [
         'ai_management' => 'AI Management',
         'parameters' => 'System Parameters',
         'report' => 'Report and Record',
-        'setting' => 'Settings'
+        'maintenance' => 'Maintenance',
+        'setting' => 'Settings',
+        'my_module' => 'My Module'
     ],
 ];

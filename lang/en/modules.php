@@ -6,6 +6,10 @@ return [
         'plural_label' => 'Modules',
     ],
 
+    'my' => [
+        'title' => 'My Modules'
+    ],
+
     'requests' => [
         'resource' => [
             'label'        => 'Module Request',

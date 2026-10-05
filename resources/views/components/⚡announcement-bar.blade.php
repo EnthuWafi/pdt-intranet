@@ -3,6 +3,7 @@
 use App\Models\Announcement;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
+use App\Filament\Resources\Announcements\AnnouncementResource;
 
 new class extends Component
 {
@@ -10,6 +11,11 @@ new class extends Component
     public function announcements()
     {
         return Announcement::active()->latest()->get();
+    }
+
+    public static function getUrl(Announcement $announcement) 
+    {
+        return AnnouncementResource::getUrl('view', ['record' => $announcement]);
     }
 };
 ?>
@@ -112,9 +118,9 @@ new class extends Component
                         @foreach($this->announcements as $announcement)
                         <span class="font-medium flex items-center gap-2" style="color: var(--{{ $announcement->type->getColor() }}-600);">
                                 @svg($announcement->type->getIcon(), 'w-5 h-5 text-custom-600')
-                                <span class="text-gray-800">
+                                <a class="text-gray-800" href="{{ $this->getUrl($announcement) }}">
                                     {{ $announcement->type->getLabel() }} - {{ $announcement->title }}
-                                </span>
+                                </a>
                             </span>
                         @endforeach
                     @else

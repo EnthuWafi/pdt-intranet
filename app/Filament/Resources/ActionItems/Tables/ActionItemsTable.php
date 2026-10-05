@@ -13,8 +13,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
+use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -61,6 +64,7 @@ class ActionItemsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
+                self::getWorkflowAction(),
                 self::getProcessAction(),
                 self::getDelegateAction(),
                 self::getReturnForRevisionAction(),
@@ -91,6 +95,65 @@ class ActionItemsTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected static function getWorkflowAction(): Action
+    {
+        return Action::make('workflow_history')
+        ->label('History')
+        ->icon('heroicon-m-clock')
+        ->color('gray')
+        ->modalHeading(fn (ActionItem $record): string => "Workflow Chain: {$record->title}")
+        ->modalWidth('4xl')
+        ->modalSubmitAction(false)
+        ->modalCancelActionLabel('Close')
+        ->infolist([
+            RepeatableEntry::make('history')
+                ->label('Execution Sequence')
+                ->getStateUsing(fn (ActionItem $record) => $record->getWorkflowHistory())
+                ->schema([
+                    Grid::make(4)
+                        ->schema([
+                            TextEntry::make('created_at')
+                                ->label('Timestamp')
+                                ->dateTime('d M Y, h:i A'),
+
+                            TextEntry::make('action_type')
+                                ->label('Type')
+                                ->badge(),
+
+                            TextEntry::make('status')
+                                ->label('Status')
+                                ->badge(),
+
+                            TextEntry::make('assignedTo.name')
+                                ->label('Assigned To')
+                                ->placeholder('Shared Pool'),
+                        ]),
+
+                    Grid::make(2)
+                        ->schema([
+                            TextEntry::make('assignedBy.name')
+                                ->label('Assigned By')
+                                ->placeholder('System'),
+
+                            TextEntry::make('completedBy.name')
+                                ->label('Handled By')
+                                ->placeholder('In Progress'),
+                        ]),
+
+                    TextEntry::make('description')
+                        ->label('Task / Handoff Note')
+                        ->columnSpanFull()
+                        ->placeholder('-'),
+
+                    TextEntry::make('review_notes')
+                        ->label('Audit Remarks')
+                        ->columnSpanFull()
+                        ->color('gray')
+                        ->placeholder('None'),
+                ]),
+        ]);
     }
 
     protected static function getReassignAction(): Action 

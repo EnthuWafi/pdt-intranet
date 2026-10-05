@@ -24,7 +24,7 @@ class UnitResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.groups.parameters');
+        return __('navigation.groups.user_management');
     }
     public static function getModelLabel(): string
     {

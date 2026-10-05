@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Announcements;
 use App\Filament\Resources\Announcements\Pages\CreateAnnouncement;
 use App\Filament\Resources\Announcements\Pages\EditAnnouncement;
 use App\Filament\Resources\Announcements\Pages\ListAnnouncements;
+use App\Filament\Resources\Announcements\Pages\ViewAnnouncement;
 use App\Filament\Resources\Announcements\Schemas\AnnouncementForm;
 use App\Filament\Resources\Announcements\Tables\AnnouncementsTable;
 use App\Models\Announcement;
@@ -59,6 +60,7 @@ class AnnouncementResource extends Resource
             'index' => ListAnnouncements::route('/'),
             'create' => CreateAnnouncement::route('/create'),
             'edit' => EditAnnouncement::route('/{record}/edit'),
+            'view' => ViewAnnouncement::route('/{record}')
         ];
     }
 }

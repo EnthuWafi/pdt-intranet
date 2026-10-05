@@ -15,13 +15,14 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 #[Fillable(['name', 'email', 'password', 'last_seen_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements HasMedia, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
+    use HasFactory, Notifiable, HasRoles, InteractsWithMedia, HasRecursiveRelationships;
 
     /**
      * Get the attributes that should be cast.
@@ -63,6 +64,11 @@ class User extends Authenticatable implements HasMedia, HasAvatar
     public function manager()
     {
         return $this->belongsTo(User::class, 'manager_id', 'user_id');
+    }
+
+    public function getParentKeyName(): string
+    {
+        return 'manager_id';
     }
 
 

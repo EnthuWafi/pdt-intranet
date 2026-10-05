@@ -8,13 +8,17 @@ use App\Enums\ActionItemStatus;
 use App\Enums\ActionType;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class ActionItem extends Model
 {
     //
+    use HasRecursiveRelationships;
     protected $guarded = [];
 
     protected $casts = [
@@ -40,6 +44,11 @@ class ActionItem extends Model
         return $this->belongsTo(User::class, 'assigned_by_user_id');
     }
 
+    public function getParentKeyName()
+    {
+        return 'parent_id';
+    }
+
     public function getUrl(): ?string
     {
         if ($this->actionable instanceof HasActionUrl) {
@@ -54,6 +63,18 @@ class ActionItem extends Model
         return $this->belongsTo(User::class, 'completed_by_user_id');
     }
 
+    public function getWorkflowHistory(): Collection
+    {
+        // If this task has no ancestors, it IS the root; otherwise retrieve its top-level root.
+        $root = $this->rootAncestor ?? $this;
+
+        return $root->descendantsAndSelf()
+            ->with(['assignedTo', 'assignedBy', 'completedBy'])
+            ->orderBy('id', 'asc')
+            ->get();
+    }
+
+    //for atomic operation
     public function claim(User $user): bool
     {
         return DB::transaction(function () use ($user) {
@@ -89,10 +110,10 @@ class ActionItem extends Model
                     $hasMatch = in_array($rule, $userPermissions);
 
                     if ($operator === 'or' && $hasMatch === true) {
-                        return true; // Short-circuit: OR condition satisfied
+                        return true; // OR condition satisfied
                     }
                     if ($operator === 'and' && $hasMatch === false) {
-                        return false; // Short-circuit: AND condition broken
+                        return false; // AND condition broken
                     }
                 }
                 
@@ -130,7 +151,8 @@ class ActionItem extends Model
                 ->orWhereIn($this->qualifyColumn('id'), $allowedPoolIds);
         });
     }
-// -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
     // Polymorphic Workflow Actions
     // -------------------------------------------------------------------------
 
@@ -192,6 +214,7 @@ class ActionItem extends Model
                 : [];
 
             return static::create([
+                'parent_id'            => $this->id,
                 'assigned_to_user_id'  => $subordinate->id,
                 'assigned_by_user_id'  => $manager->id,
                 'actionable_type'      => $this->actionable_type,
@@ -229,6 +252,7 @@ class ActionItem extends Model
                 : [];
 
             return static::create([
+                'parent_id'            => $this->id,
                 'assigned_to_user_id'  => $targetManagerId,
                 'assigned_by_user_id'  => $subordinate->id,
                 'actionable_type'      => $this->actionable_type,
@@ -257,6 +281,7 @@ class ActionItem extends Model
             ]);
 
             return static::create([
+                'parent_id'            => $this->id,
                 'assigned_to_user_id'  => $this->assigned_by_user_id, // Return to subordinate
                 'assigned_by_user_id'  => $manager->id,
                 'actionable_type'      => $this->actionable_type,
@@ -318,6 +343,7 @@ class ActionItem extends Model
 
             // 2. Spawn replacement task carrying forward existing payload and configuration
             return static::create([
+                'parent_id'            => $this->id,
                 'assigned_to_user_id'  => $newAssignee->id,
                 'assigned_by_user_id'  => $actor->id,
                 'actionable_type'      => $this->actionable_type,
