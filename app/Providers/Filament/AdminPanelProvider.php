@@ -10,6 +10,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 // use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -21,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 use Filament\View\PanelsRenderHook;
@@ -47,7 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label(__('navigation.groups.main'))
-                    ->icon('heroicon-o-home'),
+                    ->icon('heroicon-o-home')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.my_work'))
@@ -55,31 +58,38 @@ class AdminPanelProvider extends PanelProvider
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.user_management'))
-                    ->icon('heroicon-o-users'),
+                    ->icon('heroicon-o-users')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.system_management'))
-                    ->icon('heroicon-o-server-stack'),
+                    ->icon('heroicon-o-server-stack')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.ai_management'))
-                    ->icon('heroicon-o-sparkles'),
+                    ->icon('heroicon-o-sparkles')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.parameters'))
-                    ->icon('heroicon-o-adjustments-horizontal'),
+                    ->icon('heroicon-o-adjustments-horizontal')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.report'))
-                    ->icon('heroicon-o-document-chart-bar'),
+                    ->icon('heroicon-o-document-chart-bar')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.maintenance'))
-                    ->icon('heroicon-o-wrench-screwdriver'),
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ,
 
                 NavigationGroup::make()
                     ->label(__('navigation.groups.setting'))
-                    ->icon('heroicon-o-cog-6-tooth'),
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ,
 
             ])
             ->profile(EditProfile::class)
@@ -120,6 +130,9 @@ class AdminPanelProvider extends PanelProvider
             )->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.hooks.bottom-footer')
+            )->renderHook(
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn () => view('filament.hooks.sidebar-footer'),
             );
     }
 }

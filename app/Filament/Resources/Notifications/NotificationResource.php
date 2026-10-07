@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Notifications;
 use App\Filament\Resources\Notifications\Pages\ManageNotifications;
 use App\Models\Notification;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -17,9 +19,12 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class NotificationResource extends Resource
 {
@@ -33,7 +38,7 @@ class NotificationResource extends Resource
     }
     public static function getModelLabel(): string
     {
-        return __('navigation.title');
+        return __('notification.title');
     }
 
 
@@ -62,23 +67,23 @@ class NotificationResource extends Resource
             ->latest();
     }
 
-    public static function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('type')
-                    ->required(),
-                TextInput::make('notifiable_type')
-                    ->required(),
-                TextInput::make('notifiable_id')
-                    ->required()
-                    ->numeric(),
-                Textarea::make('data')
-                    ->required()
-                    ->columnSpanFull(),
-                DateTimePicker::make('read_at'),
-            ]);
-    }
+    // public static function form(Schema $schema): Schema
+    // {
+    //     return $schema
+    //         ->components([
+    //             TextInput::make('type')
+    //                 ->required(),
+    //             TextInput::make('notifiable_type')
+    //                 ->required(),
+    //             TextInput::make('notifiable_id')
+    //                 ->required()
+    //                 ->numeric(),
+    //             Textarea::make('data')
+    //                 ->required()
+    //                 ->columnSpanFull(),
+    //             DateTimePicker::make('read_at'),
+    //         ]);
+    // }
 
     public static function infolist(Schema $schema): Schema
     {
@@ -106,41 +111,70 @@ class NotificationResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+            return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID'),
-                TextColumn::make('type')
-                    ->searchable(),
-                TextColumn::make('notifiable_type')
-                    ->searchable(),
-                TextColumn::make('notifiable_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('read_at')
-                    ->dateTime()
-                    ->sortable(),
+                IconColumn::make('read_at')
+                    ->label('Status')
+                    ->icon(fn ($state): string => is_null($state) ? 'heroicon-s-envelope' : 'heroicon-o-envelope-open')
+                    ->color(fn ($state): string => is_null($state) ? 'primary' : 'gray')
+                    ->tooltip(fn ($state): string => is_null($state) ? 'Unread' : 'Read'),
+
+                TextColumn::make('data.title')
+                    ->label('Title')
+                    ->weight(fn (Notification $record): string => $record->unread() ? 'bold' : 'normal')
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('data->title', 'ilike', "%{$search}%");
+                    }),
+
+                TextColumn::make('data.body')
+                    ->label('Message')
+                    ->limit(60)
+                    ->color('gray')
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('data->body', 'ilike', "%{$search}%");
+                    }),
+
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Received')
+                    ->dateTime('d M Y, h:i A')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('unread')
+                    ->label('Unread Only')
+                    ->query(fn (Builder $query): Builder => $query->whereNull('read_at')),
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+            ->actions([
+                Action::make('view_details')
+                    ->label('View')
+                    ->icon('heroicon-m-eye')
+                    ->modalHeading(fn (Notification $record): string => $record->data['title'] ?? 'Notification Details')
+                    ->modalDescription(fn (Notification $record): string => $record->data['body'] ?? '')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->action(function (Notification $record) {
+                        $record->markAsRead();
+                    }),
+
+                Action::make('mark_as_read')
+                    ->label('Mark Read')
+                    ->icon('heroicon-m-check')
+                    ->color('gray')
+                    ->visible(fn (Notification $record): bool => $record->unread())
+                    ->action(fn (Notification $record) => $record->markAsRead()),
+
+                Action::make('mark_as_unread')
+                    ->label('Mark Unread')
+                    ->icon('heroicon-m-arrow-uturn-left')
+                    ->color('gray')
+                    ->visible(fn (Notification $record): bool => $record->read())
+                    ->action(fn (Notification $record) => $record->markAsUnread()),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+            ->bulkActions([
+                BulkAction::make('mark_all_read')
+                    ->label('Mark Selected as Read')
+                    ->icon('heroicon-m-check')
+                    ->action(fn (Collection $records) => $records->each->markAsRead()),
             ]);
     }
 
@@ -149,5 +183,11 @@ class NotificationResource extends Resource
         return [
             'index' => ManageNotifications::route('/'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        // Return false to prevent creating records
+        return false;
     }
 }

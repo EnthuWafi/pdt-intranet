@@ -22,21 +22,23 @@ new class extends Component
 
 <div>
     {{-- The biggest battle is the war against ignorance. - Mustafa Kemal Atatürk --}}
-    <!-- We move the poll up to the root level container -->
     <style scoped>
         @keyframes dynamic-marquee {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-50%, 0, 0); }
         }
     </style>
-    <div wire:poll.60s class="bg-amber-400 text-neutral-900 border-b border-amber-500 overflow-hidden text-xs">
+    <div wire:poll.60s class="bg-gray-50-400 text-neutral-900 dark:text-white border-b border-gray-300 overflow-hidden text-xs">
     
-    <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center gap-3">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
         <!-- Label -->
-        <span class="z-10 font-bold uppercase tracking-wider text-[10px] bg-neutral-900 text-white px-2 py-0.5 rounded shadow-sm shrink-0">
+        <span class="z-10 font-bold uppercase tracking-wider text-[10px]  rounded shrink-0">
             Pengumuman
         </span>
-
+        <div class="h-4 w-px bg-gray-300 mx-1"></div>
+        <div class="px-1 py-1 bg-amber-300 rounded shadow-sm">
+            <span>🔊</span>
+        </div>
         <!-- Dynamic Marquee Wrapper -->
         <div 
             class="relative flex-1 overflow-hidden"
@@ -118,7 +120,7 @@ new class extends Component
                         @foreach($this->announcements as $announcement)
                         <span class="font-medium flex items-center gap-2" style="color: var(--{{ $announcement->type->getColor() }}-600);">
                                 @svg($announcement->type->getIcon(), 'w-5 h-5 text-custom-600')
-                                <a class="text-gray-800" href="{{ $this->getUrl($announcement) }}">
+                                <a class="text-gray-800 dark:text-white" href="{{ $this->getUrl($announcement) }}">
                                     {{ $announcement->type->getLabel() }} - {{ $announcement->title }}
                                 </a>
                             </span>

@@ -4,6 +4,17 @@
 @endphp
 
 <style>
+    .bg-lines {
+        background-image: 
+            linear-gradient(135deg, transparent 0 33%, rgba(208, 211, 214, 0.32) 33% 43%, transparent 43%), 
+            linear-gradient(135deg, transparent 0 45%, rgba(242, 214, 0, 0.36) 45% 48%, transparent 48%);
+    }
+
+    .dark .bg-lines {
+        background-image: 
+            linear-gradient(135deg, transparent 0 33%, rgba(255, 255, 255, 0.05) 33% 43%, transparent 43%), 
+            linear-gradient(135deg, transparent 0 45%, rgba(242, 214, 0, 0.2) 45% 48%, transparent 48%);
+    }
     .action-btn {
         transition: all 0.2s ease;
     }
@@ -15,7 +26,7 @@
 
 
 <livewire:announcement-bar />
-<div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm p-6 mb-1 flex flex-col lg:flex-row items-center justify-between gap-6">
+<div class="bg-white bg-lines dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm p-6 mb-1 flex flex-col lg:flex-row items-center justify-between gap-6">
     
     {{-- Left: Brand & Crest --}}
     <div class="flex items-center gap-5 w-full lg:w-auto">
