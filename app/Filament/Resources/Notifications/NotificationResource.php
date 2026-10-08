@@ -32,6 +32,9 @@ class NotificationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Bell;
 
+    protected static ?int $navigationSort = 3;
+
+
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.groups.my_work');
@@ -111,7 +114,7 @@ class NotificationResource extends Resource
 
     public static function table(Table $table): Table
     {
-            return $table
+        return $table
             ->columns([
                 IconColumn::make('read_at')
                     ->label('Status')

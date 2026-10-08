@@ -33,13 +33,13 @@
         <img src="{{ Vite::asset('resources/images/perak.webp') }}" alt="Crest" class="h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-md shrink-0">
         <div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">
-                {{ __('portal.portal_name') }} {{ __('portal.organization_shortform') }}
+                {{ __('common.organization.portal') }} {{ __('common.organization.shortform') }}
             </h1>
             <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                {{ __('portal.organization_name') }}
+                {{ __('common.organization.name') }}
             </p>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700">
-                {{ __('portal.version') }} 1.0
+                {{ __('common.general.version') }} 1.0
             </span>
         </div>
     </div>
@@ -59,14 +59,14 @@
             <div class="min-w-0 flex-1">
                 <div class="flex items-center justify-between gap-1 mb-1">
                     <strong class="text-xs font-bold text-gray-900 dark:text-white truncate block group-hover:text-yellow-700 dark:group-hover:text-yellow-400">
-                        {{ __('portal.hello') }}, {{ auth()->user()->name }}
+                        {{ __('common.general.hello') }}, {{ auth()->user()->name }}
                     </strong>
                     <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-[9px] font-extrabold text-green-700 dark:text-green-300 shrink-0">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {{ __('portal.online') }}
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {{ __('common.general.online') }}
                     </span>
                 </div>
                 <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
-                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->roles->first()?->name ?? __('portal.unknown') }}</span><br>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->roles->first()?->name ?? __('common.general.unknown') }}</span><br>
                     <span>{{ now()->translatedFormat('l, d F Y') }}</span><br>
                     <span class="font-medium text-blue-700 dark:text-blue-300">{{ __('common.session.timeleft') }}
 
@@ -114,7 +114,7 @@
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
                     <x-heroicon-o-question-mark-circle class="w-5 h-5 text-neutral-900 stroke-2" />
                 </div>
-                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.help') }}</span>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('common.header.help') }}</span>
             </button>
 
             <button 
@@ -125,7 +125,7 @@
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
                     <x-heroicon-o-chat-bubble-left-right class="w-5 h-5 text-neutral-900 stroke-2" />
                 </div>
-                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.faq') }}</span>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('common.header.faq') }}</span>
             </button>
 
             <button 
@@ -136,7 +136,7 @@
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
                     <x-heroicon-o-phone class="w-5 h-5 text-neutral-900 stroke-2" />
                 </div>
-                <span class="text-[9px] font-bold tracking-wider">{{ __('portal.contact') }}</span>
+                <span class="text-[9px] font-bold tracking-wider">{{ __('common.header.contact') }}</span>
             </button>
         </div>
 

@@ -19,35 +19,35 @@ class UsersTable
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('avatar')
-                    ->label(__('portal.user.columns.user_profile'))
+                    ->label(__('user.columns.user_profile'))
                     ->collection('avatar')
                     ->circular()
                     ->defaultImageUrl(fn ($record) => $record->getFilamentAvatarUrl()),
                 TextColumn::make('name')
-                    ->label(__('portal.user.columns.name'))
+                    ->label(__('user.columns.name'))
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label(__('portal.user.columns.email'))
+                    ->label(__('user.columns.email'))
                     ->searchable(),
                 TextColumn::make('email_verified_at')
-                    ->label(__('portal.user.columns.email_verified_at'))
+                    ->label(__('user.columns.email_verified_at'))
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label(__('portal.created_at'))
+                    ->label(__('common.timestamps.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->label(__('portal.updated_at'))
+                    ->label(__('common.timestamps.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('position')
-                    ->label(__('portal.user.columns.position'))
+                    ->label(__('user.columns.position'))
                     ->searchable(),
                 TextColumn::make('phone')
-                    ->label(__('portal.user.columns.phone'))
+                    ->label(__('user.columns.phone'))
                     ->searchable(),
                 TextColumn::make('unit_id')
                     ->numeric()
@@ -56,7 +56,7 @@ class UsersTable
             ->filters([
                 //
                 SelectFilter::make('department')
-                    ->label(__('portal.user.columns.department'))
+                    ->label(__('user.columns.department'))
                     ->options(function() { Department::pluck('name', 'id')->toArray();})
                     ->query(function (Builder $query, array $data) {
                         if (!empty($data['value'])) {

@@ -68,7 +68,7 @@ class ModuleRequestsTable
                         if ($record->module->is_internal) {
                             return [
                                 Select::make('roles')
-                                    ->label(__('portal.module.choose_role'))
+                                    ->label(__('modules.requests.choose_role'))
                                     ->multiple()
                                     ->options(
                                         Role::where('name', 'like', strtoupper($record->module->code) . ':%')
@@ -83,7 +83,7 @@ class ModuleRequestsTable
                             // External: show notice or external role field
                             return [
                                 Select::make('role')
-                                ->label(__('portal.module.choose_role'))
+                                ->label(__('modules.requests.choose_role'))
                                 ->options(ExternalModuleRole::class)
                                 ->required()
                             ];

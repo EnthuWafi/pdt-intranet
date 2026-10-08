@@ -24,7 +24,7 @@ class MyAccess extends Page
     protected string $view = 'filament.pages.my-access';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.groups.my_work');
@@ -102,7 +102,7 @@ class MyAccess extends Page
 
                     if ($exists) {
                         throw ValidationException::withMessages([
-                            'module_ids' => __('portal.messages.already_applied')
+                            'module_ids' => __('modules.messages.already_applied')
                         ]);
                     }
 
@@ -115,20 +115,21 @@ class MyAccess extends Page
 
 
                     //TODO: Make notification, action item, and add to activity log
+                    // Handled in Observe
                     
                 }
                     
                 $this->form->fill();
 
                 Notification::make()
-                    ->title(__('portal.messages.request_submitted'))
+                    ->title(__('modules.messages.request_submitted'))
                     ->success()
                     ->send();
             });
         }
         catch (ValidationException $e) {
             Notification::make()
-                ->title(__('portal.messages.already_applied'))
+                ->title(__('modules.messages.already_applied'))
                 ->danger()
                 ->send();
         }

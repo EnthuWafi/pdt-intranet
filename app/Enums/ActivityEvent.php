@@ -17,7 +17,7 @@ enum ActivityEvent: string implements HasLabel, HasColor, HasIcon
 
     public function getLabel(): ?string
     {
-        return __('portal.activity_event.' . $this->value);
+        return __('my_activity.events.' . $this->value);
     }
 
     public function getColor(): string|array|null

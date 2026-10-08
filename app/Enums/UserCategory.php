@@ -13,7 +13,7 @@ enum UserCategory: string implements HasLabel, HasColor, HasIcon
 
     public function getLabel(): ?string
     {
-        return __('portal.user.category.' . $this->value);
+        return __('user.category.' . $this->value);
     }
 
     public function getColor(): string|array|null

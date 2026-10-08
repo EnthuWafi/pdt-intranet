@@ -199,6 +199,8 @@ class ActionItem extends Model
         });
     }
 
+    //Possibly transferring to here
+
     public function delegate(User $manager, User $subordinate, ?string $instructions = null): self
     {
         return DB::transaction(function () use ($manager, $subordinate, $instructions) {

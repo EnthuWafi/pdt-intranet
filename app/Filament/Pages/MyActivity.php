@@ -10,7 +10,7 @@ class MyActivity extends Page
     protected string $view = 'filament.pages.my-activity';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-inbox-stack';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.groups.my_work');

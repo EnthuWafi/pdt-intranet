@@ -8,6 +8,7 @@ use App\Enums\ActionType;
 use App\Filament\Schemas\Components\PermissionRuleBuilder;
 use App\Models\ActionItem;
 use App\Models\User;
+use App\Notifications\TaskDelegatedNotification;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Radio;
@@ -32,7 +33,7 @@ class SpawnActionItemAction extends Action
         parent::setUp();
 
         $this
-            ->label('Request Action / Delegate')
+            ->label(__('action_inbox.spawn.title'))
             ->icon('heroicon-m-user-plus')
             ->color('warning')
             ->form(function (Model $record): array {
@@ -41,34 +42,35 @@ class SpawnActionItemAction extends Action
 
                 return [
                     TextInput::make('title')
-                        ->label('Task Summary')
-                        ->placeholder('e.g., Verify quota allocation, Check server logs')
+                        ->label(__('action_inbox.spawn.fields.title'))
+                        ->placeholder(__('action_inbox.spawn.fields.title_placeholder'))
                         ->required()
                         ->maxLength(255),
 
                     Radio::make('assignment_type')
-                        ->label('Assignment Target')
+                        ->label(__('action_inbox.spawn.fields.assignment_type'))
                         ->options([
-                            'pool' => 'Shared Department Pool (Anyone can pick up)',
-                            'subordinate' => 'Assign to Specific Subordinate',
+                            'pool' => __('action_inbox.spawn.fields.pool'),
+                            'subordinate' => __('action_inbox.spawn.fields.subordinate'),
                         ])
                         ->default($hasSubordinates ? 'subordinate' : 'pool')
                         ->live(),
 
                     Select::make('assigned_to_user_id')
-                        ->label('Select Subordinate')
+                        ->label(__('action_inbox.spawn.fields.assigned_to_user_id'))
                         ->options(fn () => $user->subordinates()->pluck('name', 'id'))
                         ->searchable()
                         ->required()
                         ->visible(fn (Get $get) => $get('assignment_type') === 'subordinate'),
 
                     Textarea::make('instructions')
-                        ->label('Instructions / Notes')
-                        ->placeholder('Describe what needs to be verified or updated...')
+                        ->label(__('action_inbox.spawn.fields.instructions'))
+                        ->placeholder(__('action_inbox.spawn.fields.instructions_placeholder'))
                         ->required()
                         ->rows(3),
 
                     PermissionRuleBuilder::make('required_permissions')
+                        ->label(__('action_inbox.spawn.fields.required_permissions'))
                         ->forActionable()
                         ->visible(fn (Get $get): bool => $get('assignment_type') === 'pool')
                 ];
@@ -78,6 +80,16 @@ class SpawnActionItemAction extends Action
                 $isPool = $data['assignment_type'] === 'pool';
                 
                 $assigneeId = $isPool ? null : $data['assigned_to_user_id'];
+
+                $assignee = User::find($assigneeId) ?? null;
+
+                if ($assignee == null) {
+                    Notification::make()
+                    ->title(__('user.notification.does_not_exist'))
+                    ->danger()
+                    ->send();
+                    return;
+                }
 
                 ActionItem::create([
                     'actionable_type'      => $record->getMorphClass(),
@@ -91,9 +103,15 @@ class SpawnActionItemAction extends Action
                     'required_permissions' => $isPool ? ($data['required_permissions'] ?? []) : [],
                 ]);
 
+                //notify
+                if ($assigneeId != null) {
+                    $assignee->notify(new TaskDelegatedNotification($data['title'], $assignee->name));
+                }
+
+                // for user
                 $recipientNotice = $assigneeId
-                    ? 'Task assigned to subordinate.'
-                    : 'Task sent to shared department pool.';
+                    ? __('action_inbox.notifications.assigned')
+                    : __('action_inbox.notifications.unassigned');
 
                 Notification::make()
                     ->title($recipientNotice)

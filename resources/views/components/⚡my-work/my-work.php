@@ -35,7 +35,7 @@ new class extends Component
         );
 
         Notification::make()
-            ->title(__('portal.messages.access_approved'))
+            ->title(__('modules.messages.access_approved'))
             ->success()
             ->send();
     }

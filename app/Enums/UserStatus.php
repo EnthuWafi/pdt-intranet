@@ -14,7 +14,7 @@ enum UserStatus: string implements HasLabel, HasColor, HasIcon
 
       public function getLabel(): ?string
     {
-        return __('portal.user.status.' . $this->value);
+        return __('user.status.' . $this->value);
     }
 
     public function getColor(): string|array|null

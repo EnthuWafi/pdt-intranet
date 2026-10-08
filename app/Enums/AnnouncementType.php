@@ -16,7 +16,7 @@ enum AnnouncementType: string implements HasLabel, HasColor, HasIcon
 
       public function getLabel(): ?string
     {
-        return __('portal.announcement.type.' . $this->value);
+        return __('announcement.type.' . $this->value);
     }
 
     public function getColor(): string|array|null

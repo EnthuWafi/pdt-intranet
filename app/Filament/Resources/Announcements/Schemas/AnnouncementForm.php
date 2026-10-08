@@ -18,24 +18,24 @@ class AnnouncementForm
         return $schema
             ->components([
                 Select::make('type')
-                    ->label(__('portal.announcement.columns.type'))
+                    ->label(__('announcement.columns.type'))
                     ->options(AnnouncementType::class)
                     ->required(),
                 TextInput::make('title')
-                    ->label(__('portal.announcement.columns.title'))
+                    ->label(__('announcement.columns.title'))
                     ->required(),
                 Textarea::make('content')
-                    ->label(__('portal.announcement.columns.content'))
+                    ->label(__('announcement.columns.content'))
                     ->required()
                     ->columnSpanFull(),
                 Toggle::make('is_active')
-                    ->label(__('portal.announcement.columns.is_active'))
+                    ->label(__('announcement.columns.is_active'))
                     ->required(),
                 DateTimePicker::make('starts_at')
-                    ->label(__('portal.announcement.columns.starts_at'))
+                    ->label(__('announcement.columns.starts_at'))
                     ->required()->default(now()->timestamp),
                 DateTimePicker::make('expires_at')
-                    ->label(__('portal.announcement.columns.expires_at'))
+                    ->label(__('announcement.columns.expires_at'))
                     ->required()->default(now()->addDays(7)),
             ]);
     }

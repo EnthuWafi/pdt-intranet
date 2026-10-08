@@ -4,9 +4,14 @@ namespace App\Observers;
 
 use App\Enums\ActionItemStatus;
 use App\Enums\ActionType;
+use App\Enums\ActivityEvent;
 use App\Enums\ModuleStatus;
 use App\Models\ActionItem;
+use App\Models\ActivityLog;
 use App\Models\ModuleRequest;
+use App\Models\User;
+use App\Notifications\ModuleRequestSubmittedNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
 class ModuleRequestObserver
@@ -37,16 +42,35 @@ class ModuleRequestObserver
 
         ActionItem::create([
             'assigned_to_user_id'  => null,
-            'assigned_by_user_id'  => $moduleRequest->user_id,
+            'assigned_by_user_id'  => null,
             'actionable_type'      => ModuleRequest::class,
             'actionable_id'        => $moduleRequest->id,
             'title'                => __('modules.actions.title_request') . $moduleRequest->module->name,
-            'description'          => __('modules.actions.desc_request', ['applicantname'=>$applicant->name, 
-                                                                        'justification'=>$moduleRequest->purpose]),
+            'description'          => __('modules.actions.desc_request', 
+            ['applicantname'=>$applicant->name, 'justification'=>$moduleRequest->purpose]),
             'action_type'          => ActionType::APPROVE,
             'status'               => ActionItemStatus::PENDING_APPROVAL,
             'required_permissions' => $rules,
         ]);
+
+        //activity log
+        ActivityLog::log(
+            event: ActivityEvent::CREATED,
+            description: __('my_activity.audits.module_request'),
+            subject: $moduleRequest,
+            properties: [
+                'module_id' => $moduleRequest->module_id,
+                'purpose'   => $moduleRequest->purpose,
+            ]
+        );
+        //notification
+        $approvers = User::permission('Update:ModuleRequest')->get();
+
+        $module = $moduleRequest->module();
+            
+        if ($approvers->isNotEmpty()) {
+            Notification::send($approvers, new ModuleRequestSubmittedNotification($module->name));
+        }
     }
 
     /**

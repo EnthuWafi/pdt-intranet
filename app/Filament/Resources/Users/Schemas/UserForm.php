@@ -21,7 +21,7 @@ class UserForm
         return $schema
             ->components([
                 SpatieMediaLibraryFileUpload::make('avatar')
-                    ->label(__('portal.user.columns.user_profile'))
+                    ->label(__('user.columns.user_profile'))
                     ->collection('avatar')
                     ->image()
                     ->imageEditor()
@@ -29,36 +29,36 @@ class UserForm
                     ->maxSize(2048)
                     ->columnSpanFull(),
                 TextInput::make('name')
-                    ->label(__('portal.user.columns.name'))
+                    ->label(__('user.columns.name'))
                     ->required(),
                 TextInput::make('email')
-                    ->label(__('portal.user.columns.email'))
+                    ->label(__('user.columns.email'))
                     ->label('Email address')
                     ->email()
                     ->required(),
                 DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
-                    ->label(__('portal.user.columns.password'))
+                    ->label(__('user.columns.password'))
                     ->password()
                     ->required(),
                 TextInput::make('position')
-                ->label(__('portal.user.columns.position')),
+                ->label(__('user.columns.position')),
 
                 TextInput::make('phone')
-                    ->label(__('portal.user.columns.phone'))
+                    ->label(__('user.columns.phone'))
                     ->tel(),
 
                 Select::make('user_category')
-                    ->label(__('portal.user.columns.user_category'))
+                    ->label(__('user.columns.user_category'))
                     ->options(UserCategory::class)
                     ->required(),
 
                 TextInput::make('agency_name')
-                    ->label(__('portal.user.columns.agency_name'))
+                    ->label(__('user.columns.agency_name'))
                     ->required(),
 
                 Select::make('department')
-                ->label(__('portal.user.columns.department'))
+                ->label(__('user.columns.department'))
                 ->options(Department::query()->pluck('name', 'id'))
                 ->live()
                 ->afterStateUpdated(function (Set $set) {
@@ -68,7 +68,7 @@ class UserForm
                 ->dehydrated(false),
 
                 Select::make('unit_id')
-                ->label(__('portal.user.columns.unit'))
+                ->label(__('user.columns.unit'))
                 ->options(function (Get $get): Collection {
                     $departmentId = $get('department');
                     
@@ -85,7 +85,7 @@ class UserForm
                 ->preload(),
 
                 Select::make('roles')
-                ->label(__('portal.user.columns.roles'))
+                ->label(__('user.columns.roles'))
                 ->relationship(name: 'roles', titleAttribute: 'name')
                 ->multiple()
                 ->preload()

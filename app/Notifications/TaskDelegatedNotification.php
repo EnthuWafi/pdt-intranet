@@ -4,8 +4,8 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Filament\Notifications\Notification as FilamentNotification;
 
 class TaskDelegatedNotification extends Notification
 {
@@ -30,10 +30,14 @@ class TaskDelegatedNotification extends Notification
 
     public function toDatabase(object $notifiable): array
     {
-        return [
-            'title' => 'Task Delegated',
-            'body'  => "{$this->assignedByName} assigned '{$this->taskTitle}' to you.",
-        ];
+        return FilamentNotification::make()
+            ->title(__('action_inbox.notifications.delegated_title'))
+            ->body(__('action_inbox.notifications.delegated_body', [
+                'assignedByName' => $this->assignedByName,
+                'taskTitle' => $this->taskTitle,
+            ]))
+            ->success()
+            ->getDatabaseMessage();
     }
 
     /**

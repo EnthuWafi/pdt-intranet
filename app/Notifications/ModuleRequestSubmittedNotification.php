@@ -4,17 +4,17 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Filament\Notifications\Notification as FilamentNotification;
 
-class ModuleRequestApproved extends Notification
+class ModuleRequestSubmittedNotification extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public string $moduleName)
     {
         //
     }
@@ -29,15 +29,13 @@ class ModuleRequestApproved extends Notification
         return ['database'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
+    public function toDatabase(object $notifiable): array 
     {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return FilamentNotification::make()
+            ->title(__('modules.notifications.submitted_title'))
+            ->body(__('modules.notifications.submitted_body', ['module' => $this->moduleName]))
+            ->success()
+            ->getDatabaseMessage();
     }
 
     /**

@@ -8,6 +8,6 @@
         x-transition:enter-end="opacity-100 translate-x-0"
         x-cloak
     >
-        {{ __('portal.portal_name') }}
+        {{ __('common.organization.portal') }}
     </span>
 </div>

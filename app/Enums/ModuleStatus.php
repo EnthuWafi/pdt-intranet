@@ -14,7 +14,7 @@ enum ModuleStatus : string implements HasLabel, HasColor, HasIcon
 
     public function getLabel(): ?string
     {
-        return __('portal.status.' . $this->value);
+        return __('common.status.' . $this->value);
     }
 
     public function getColor(): string|array|null

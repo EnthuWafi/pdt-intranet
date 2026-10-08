@@ -15,4 +15,7 @@ return [
         'approved'  => 'Approved',
         'rejected'  => 'Rejected',
     ],
+    'audits' => [
+        'module_request' => 'Requested access to module',
+    ]
 ];

@@ -32,4 +32,8 @@ return [
         'status'            => 'Status',
         'user_profile'      => 'User Profile',
     ],
+
+    'notification' => [
+        'does_not_exist' => 'Selected user does not exist.'
+    ]
 ];

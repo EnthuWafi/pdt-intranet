@@ -28,6 +28,12 @@ return [
         'created_at'    => 'Date Requested',
     ],
 
+    'notifications' => [
+        'submitted_title' => 'Module Request Submitted',
+        'submitted_body' => 'Your request for :module has been submitted successfully.',
+        'approved_title' => 'Module Request Approved',
+        'approved_body' => 'Your request for :module has been approved.',
+    ],
     'messages' => [
         'request_submitted'   => 'Your access request has been submitted successfully.',
         'access_approved'     => 'Access has been approved.',
