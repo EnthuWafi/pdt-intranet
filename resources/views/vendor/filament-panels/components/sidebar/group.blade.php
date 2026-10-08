@@ -53,7 +53,7 @@
                 {{ \Filament\Support\generate_icon_html($icon, size: IconSize::Large) }}
             @endif
 
-            <span class="fi-sidebar-group-label">
+            <span class="fi-sidebar-group-label uppercase">
                 {{ $label }}
             </span>
 

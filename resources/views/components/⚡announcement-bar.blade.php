@@ -28,7 +28,7 @@ new class extends Component
             100% { transform: translate3d(-50%, 0, 0); }
         }
     </style>
-    <div wire:poll.60s class="bg-gray-50-400 text-neutral-900 dark:text-white border-b border-gray-300 overflow-hidden text-xs">
+    <div wire:poll.60s class="bg-gray-50-400 text-neutral-900 dark:text-white overflow-hidden text-xs">
     
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
         <!-- Label -->

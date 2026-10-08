@@ -58,10 +58,11 @@
         @endif
 
         <div class="fi-topbar-start">
+                
             @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
                 <div
                     x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
-                    class="fi-topbar-collapse-sidebar-btn-ctn"
+                    class="fi-topbar-collapse-sidebar-btn-ctn hidden sm:flex"
                 >
                     @if ($isSidebarCollapsibleOnDesktop)
                         <x-filament::icon-button
@@ -114,6 +115,8 @@
                     @endif
                 </div>
             @endif
+
+            
 
             {{ FilamentView::renderHook(PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
 

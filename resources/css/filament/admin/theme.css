@@ -4,91 +4,144 @@
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../resources/views/components/*';
 @source '../../../../vendor/bezhansalleh/filament-language-switch/**';
-
 @source './resources/views/filament/**/*.blade.php';
 
+/* =========================================================
+   0. Restore Filament Panel Font
+   ========================================================= */
+body {
+    font-family: var(--font-family, ui-sans-serif, system-ui, sans-serif) !important;
+}
 
 @layer components {
-    
-    .topbar-lines {
-        background-image: 
-            linear-gradient(135deg, transparent 42%, rgba(217, 177, 0, 0.22) 43%, rgba(217, 177, 0, 0.22) 53%, transparent 54%) !important;
-        @apply !bg-white dark:!bg-slate-950 !border-b !border-amber-500/25;
+/* =========================================================
+       1. Split Topbar (Dynamic Angled Divider - Desktop Only)
+       ========================================================= */
+
+    @media (min-width: 1024px) {
+        .fi-topbar {
+        /* Force exact height and reset default borders universally */
+        @apply !h-14 !bg-white dark:!bg-zinc-950 !px-0 !ring-0 !shadow-sm !border-none; 
+        border-bottom: 1px solid theme('colors.zinc.200') !important;
+        }
+
+        .dark .fi-topbar {
+            border-bottom-color: theme('colors.zinc.800') !important;
+        }
+
+        .fi-topbar > *:not(.fi-topbar-start) {
+            @apply px-4;
+        }
+
+        .fi-topbar-start {
+            @apply !bg-zinc-900 flex items-center pl-4 pr-2 relative z-20;
+            height: calc(100% + 1px);
+            margin-bottom: -1px;
+        }
+
+        .fi-topbar-start::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: -24px; 
+            width: 48px;  
+            background-color: theme('colors.zinc.900');
+            border-right: 8px solid theme('colors.amber.400');
+            transform: skewX(24deg);
+            z-index: -1;
+        }
+
+        .fi-topbar-start, 
+        .fi-topbar-start button,
+        .fi-topbar-start span,
+        .fi-topbar-start svg {
+            @apply !text-white;
+        }
     }
 
+    .fi-topbar-open-sidebar-btn,
+    .fi-topbar-close-sidebar-btn {
+        @apply !text-zinc-600 dark:!text-zinc-300;
+    }
+    
     /* =========================================================
-       2. Permanently Dark Sidebar Shell
+       2. Permanently Dark Sidebar Base (Lighter Zinc-900)
        ========================================================= */
     .fi-sidebar,
     .dark .fi-sidebar {
-        @apply !bg-slate-950 !border-r !border-slate-800;
+        @apply !bg-zinc-900 !border-r !border-zinc-800;
     }
 
     .fi-sidebar-header,
     .dark .fi-sidebar-header {
-        @apply !bg-slate-950 !border-b !border-slate-800/80;
+        /* Match the sidebar header height to the topbar so they align perfectly */
+        @apply !h-14 !bg-zinc-900 !border-b !border-zinc-800;
     }
-
-    /* Navigation Group Headers: Retains Inter casing without stretching */
+    
     .fi-sidebar-group-label,
     .fi-sidebar-group-label span,
     .fi-sidebar-group-label button {
-        @apply !text-slate-400 !text-xs !font-semibold normal-case tracking-normal;
+        @apply !text-zinc-400 !text-xs !font-semibold normal-case tracking-normal !pb-0;
+    }
+
+    /* Compress Spacing Between Items in a Group */
+    .fi-sidebar-group-items {
+        @apply !space-y-0.5; /* Tighter list stacking */
     }
 
     /* =========================================================
-       3. Tree Connector Lines & Bullet Dots
+       3. Native Tree Connectors & Border Parts
        ========================================================= */
     .fi-sidebar ul,
-    .fi-sidebar .fi-sidebar-group-items,
-    .fi-sidebar .fi-sidebar-sub-group-items {
-        @apply !border-slate-800;
-    }
-
+    .fi-sidebar .fi-sidebar-sub-group-items,
     .fi-sidebar .fi-sidebar-item-grouped-border {
-        @apply !border-slate-800 !opacity-100;
+        @apply !border-zinc-700/60;
     }
 
-    .fi-sidebar .fi-sidebar-item-grouped-border-line {
-        @apply !bg-slate-800;
-    }
-
-    .fi-sidebar .fi-sidebar-item-grouped-border-dot,
-    .fi-sidebar .fi-sidebar-item-grouped-border span,
+    .fi-sidebar .fi-sidebar-item-grouped-border-part,
     .fi-sidebar .fi-sidebar-item-grouped-border div {
-        @apply !bg-slate-600 transition-colors duration-150;
+        @apply !bg-zinc-600 transition-colors duration-150;
     }
 
-    .fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-grouped-border .fi-sidebar-item-grouped-border-part,
-    .fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-grouped-border span,
-    .fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-grouped-border div {
+    .fi-sidebar .fi-sidebar-item:hover .fi-sidebar-item-grouped-border-part,
+    .fi-sidebar .fi-sidebar-item:hover .fi-sidebar-item-grouped-border div {
+        @apply !bg-zinc-400;
+    }
+
+    .fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-grouped-border-part,
+    .fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-grouped-border div,
+    .fi-sidebar .fi-sidebar-item.fi-active .fi-sidebar-item-grouped-border-part,
+    .fi-sidebar .fi-sidebar-item.fi-active .fi-sidebar-item-grouped-border div,
+    .fi-sidebar [aria-current="page"] ~ * .fi-sidebar-item-grouped-border-part {
         @apply !bg-amber-400;
+        box-shadow: 0 0 6px rgba(251, 191, 36, 0.45);
     }
 
     /* =========================================================
-       4. Navigation Items: Locked in Both Light & Dark Modes
+       4. Navigation Items (Locked Dark Mode + Condensed Padding)
        ========================================================= */
-    /* Idle State */
     .fi-sidebar .fi-sidebar-item > a,
     .fi-sidebar .fi-sidebar-item > button,
     .dark .fi-sidebar .fi-sidebar-item > a,
     .dark .fi-sidebar .fi-sidebar-item > button {
-        @apply !bg-transparent !text-slate-400 transition-colors duration-150 rounded-lg relative;
+        /* !py-1.5 compresses the heavy top/bottom padding inside the buttons */
+        @apply !bg-transparent !text-zinc-400 !py-1.5 transition-colors duration-150 rounded-lg relative;
     }
 
     .fi-sidebar .fi-sidebar-item span,
     .fi-sidebar .fi-sidebar-item svg,
     .dark .fi-sidebar .fi-sidebar-item span,
     .dark .fi-sidebar .fi-sidebar-item svg {
-        @apply !text-slate-400;
+        @apply !text-zinc-400 transition-colors;
     }
 
-    /* Hover & Focus (Slate-800 in all modes) */
+    /* Hover States (zinc-800 against the zinc-900 background) */
     .fi-sidebar .fi-sidebar-item > a:hover,
     .fi-sidebar .fi-sidebar-item > button:hover,
     .dark .fi-sidebar .fi-sidebar-item > a:hover,
     .dark .fi-sidebar .fi-sidebar-item > button:hover {
-        @apply !bg-slate-800 !text-white;
+        @apply !bg-zinc-800 !text-white;
     }
 
     .fi-sidebar .fi-sidebar-item:hover span,
@@ -98,52 +151,50 @@
         @apply !text-white;
     }
 
-    /* Active / Selected State (Locked Slate-800, white text, amber accent) */
+    /* Active / Selected States */
     .fi-sidebar .fi-sidebar-item-active > a,
     .fi-sidebar .fi-sidebar-item-active > button,
+    .fi-sidebar .fi-sidebar-item.fi-active > a,
+    .fi-sidebar .fi-sidebar-item.fi-active > button,
     .fi-sidebar [aria-current="page"],
     .dark .fi-sidebar .fi-sidebar-item-active > a,
-    .dark .fi-sidebar .fi-sidebar-item-active > button,
-    .dark .fi-sidebar [aria-current="page"] {
-        @apply !bg-slate-800 !text-white !font-medium relative overflow-hidden;
+    .dark .fi-sidebar .fi-sidebar-item-active > button {
+        @apply !bg-zinc-800 !text-white !font-medium relative overflow-hidden;
     }
 
     .fi-sidebar .fi-sidebar-item-active span,
     .fi-sidebar .fi-sidebar-item-active svg,
+    .fi-sidebar .fi-sidebar-item.fi-active span,
+    .fi-sidebar .fi-sidebar-item.fi-active svg,
     .fi-sidebar [aria-current="page"] span,
-    .fi-sidebar [aria-current="page"] svg,
-    .dark .fi-sidebar .fi-sidebar-item-active span,
-    .dark .fi-sidebar .fi-sidebar-item-active svg,
-    .dark .fi-sidebar [aria-current="page"] span,
-    .dark .fi-sidebar [aria-current="page"] svg {
+    .fi-sidebar [aria-current="page"] svg {
         @apply !text-white;
     }
 
-    /* Active Item Left Highlight Indicator */
-    /* .fi-sidebar .fi-sidebar-item-active > a::before,
-    .fi-sidebar .fi-sidebar-item-active > button::before,
-    .fi-sidebar [aria-current="page"]::before,
-    .dark .fi-sidebar .fi-sidebar-item-active > a::before,
-    .dark .fi-sidebar .fi-sidebar-item-active > button::before,
-    .dark .fi-sidebar [aria-current="page"]::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3.5px;
-        @apply !bg-amber-400 rounded-r;
-    } */
+    /* Hovering over an active item */
+    .fi-sidebar .fi-sidebar-item-active > a:hover,
+    .fi-sidebar .fi-sidebar-item-active > button:hover,
+    .fi-sidebar .fi-sidebar-item.fi-active > a:hover,
+    .fi-sidebar .fi-sidebar-item.fi-active > button:hover {
+        @apply !bg-zinc-700;
+    }
+
+    /* Badges */
+    .fi-sidebar .fi-sidebar-item-badge span,
+    .dark .fi-sidebar .fi-sidebar-item-badge span {
+        @apply !bg-amber-600 !text-white !font-bold !rounded-full;
+    }
 
     /* =========================================================
-       6. Sidebar Footer (Log Masuk Terakhir)
+       5. Sidebar Footer (Log Masuk Terakhir)
        ========================================================= */
     .portal-sidebar-last-login {
-        @apply flex items-center gap-3 p-3.5 mx-2 my-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 transition-all duration-200;
+        /* Slightly darker inset background for contrast against zinc-900 */
+        @apply flex items-center gap-3 p-3 mx-2 my-2 bg-zinc-950/50 border border-zinc-800/80 rounded-lg text-zinc-200 transition-all duration-200;
     }
 
     .portal-sidebar-last-login.collapsed {
-        @apply justify-center p-3 mx-1 gap-0;
+        @apply justify-center p-2.5 mx-1 gap-0;
     }
 
     .portal-sidebar-login-icon {
@@ -155,7 +206,7 @@
     }
 
     .portal-sidebar-login-copy small {
-        @apply text-slate-400 text-[10px] font-bold tracking-wider;
+        @apply text-zinc-400 text-[10px] font-bold tracking-wider;
     }
 
     .portal-sidebar-login-copy strong {
@@ -163,6 +214,6 @@
     }
 
     .portal-sidebar-login-copy span {
-        @apply text-slate-300 text-[11px];
+        @apply text-zinc-300 text-[11px];
     }
 }
