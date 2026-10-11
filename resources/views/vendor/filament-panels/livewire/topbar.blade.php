@@ -62,7 +62,7 @@
             @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
                 <div
                     x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
-                    class="fi-topbar-collapse-sidebar-btn-ctn hidden sm:flex"
+                    class="fi-topbar-collapse-sidebar-btn-ctn"
                 >
                     @if ($isSidebarCollapsibleOnDesktop)
                         <x-filament::icon-button

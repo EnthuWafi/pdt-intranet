@@ -6,11 +6,6 @@ return [
         'portal'    => 'Intranet Portal',
     ],
 
-    'header' => [
-        'help'    => 'Help',
-        'faq'     => 'FAQ',
-        'contact' => 'Contact',
-    ],
 
     'general' => [
         'hello'   => 'Hello',
@@ -47,5 +42,16 @@ return [
     ],
     'session' => [
         'timeleft' => "Time Left"
-    ]
+    ],
+    'slugs' => [
+        'help' => 'help-en',
+        'faq' => 'faq-en',
+        'contact' => 'contact-en'
+    ],
+
+    'header' => [
+        'help'    => 'Help',
+        'faq'     => 'FAQ',
+        'contact' => 'Contact',
+    ],
 ];

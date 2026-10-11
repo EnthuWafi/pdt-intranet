@@ -128,6 +128,9 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::TOPBAR_BEFORE,
                 fn () => view('filament.hooks.top-banner')
             )->renderHook(
+                PanelsRenderHook::BODY_START,
+                 hook: fn (): string => Blade::render("@livewire('portal-content-modal')")
+            )->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn () => view('filament.hooks.bottom-footer')
             )->renderHook(

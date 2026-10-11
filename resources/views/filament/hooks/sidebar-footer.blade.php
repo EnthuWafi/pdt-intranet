@@ -20,10 +20,5 @@
         <small>LOG MASUK TERAKHIR</small>
         <strong>{{ \Carbon\Carbon::parse($lastLogin)->translatedFormat('d M Y') }}</strong>
         <span>{{ \Carbon\Carbon::parse($lastLogin)->format('h:i:s A') }}</span>
-
-        <span 
-        x-text="formatTime()" 
-
-        </span>
     </div>
 </section>

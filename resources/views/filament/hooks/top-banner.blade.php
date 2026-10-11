@@ -45,12 +45,12 @@
     </div>
 
     {{-- Right: Profile Card & Action Quicklinks --}}
-    <div class="flex items-center justify-end gap-3 w-full lg:w-auto">
+    <div class="flex items-center justify-end gap-3 w-full lg:w-auto ">
         
         {{-- Profile Card --}}
         <a 
             href="{{ filament()->getProfileUrl() }}" 
-            class="group border border-gray-200 dark:border-gray-800 hover:border-yellow-400 dark:hover:border-yellow-500 bg-gray-50 dark:bg-gray-800/60 hover:bg-yellow-50/30 dark:hover:bg-yellow-950/20 rounded-xl p-3 shadow-sm flex items-center gap-3 w-full sm:w-80 min-w-[280px] transition ease-in-out duration-150 shrink-0"
+            class="md:flex hidden group border border-gray-200 dark:border-gray-800 hover:border-yellow-400 dark:hover:border-yellow-500 bg-gray-50 dark:bg-gray-800/60 hover:bg-yellow-50/30 dark:hover:bg-yellow-950/20 rounded-xl p-3 shadow-sm flex items-center gap-3 w-full sm:w-80 min-w-[280px] transition ease-in-out duration-150 shrink-0"
         >
             <div class="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-yellow-400 overflow-hidden shrink-0 shadow-inner">
                 <img src="{{ auth()->user()->getFilamentAvatarUrl() }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
@@ -105,10 +105,10 @@
         </a>
 
         {{-- Action Buttons --}}
-        <div class="hidden sm:flex items-center gap-2">
+        <div x-data class="hidden md:flex items-center gap-2">
             <button 
                 type="button"
-                x-on:click="$dispatch('open-modal', { slug: 'bantuan' })"
+                x-on:click="Livewire.dispatch('load-portal-page', { slug: '{{ __('common.slugs.help') }}' })"
                 class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
             >
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
@@ -119,7 +119,7 @@
 
             <button 
                 type="button"
-                x-on:click="$dispatch('open-modal', { slug: 'faq' })"
+                x-on:click="Livewire.dispatch('load-portal-page', { slug: '{{ __('common.slugs.faq') }}' })"
                 class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
             >
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">
@@ -130,7 +130,7 @@
 
             <button 
                 type="button"
-                x-on:click="$dispatch('open-modal', { slug: 'hubungi-kami' })"
+                x-on:click="Livewire.dispatch('load-portal-page', { slug: '{{ __('common.slugs.contact') }}' })"
                 class="bg-gray-900 dark:bg-gray-800 hover:bg-neutral-800 dark:hover:bg-gray-700 text-white rounded-xl p-2.5 flex flex-col items-center justify-center w-[72px] h-[78px] transition duration-150 shrink-0 border border-transparent dark:border-gray-700"
             >
                 <div class="w-8 h-8 rounded-lg bg-yellow-400 text-black flex items-center justify-center mb-1 shadow-sm">

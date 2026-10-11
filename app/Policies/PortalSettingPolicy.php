@@ -13,7 +13,7 @@ class PortalSettingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('ViewAny:PortalSetting');
+        return $user->can('ViewAny:PortalSetting');
     }
 
     /**
@@ -37,7 +37,7 @@ class PortalSettingPolicy
      */
     public function update(User $user, PortalSetting $portalSetting): bool
     {
-        return $user->hasPermissionTo('Update:PortalSetting');
+        return $user->can('Update:PortalSetting');
     }
 
     /**

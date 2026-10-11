@@ -34,9 +34,13 @@ body {
         }
 
         .fi-topbar-start {
-            @apply !bg-zinc-900 flex items-center pl-4 pr-2 relative z-20;
+            @apply !bg-zinc-900 flex items-center gap-x-3 pl-4 pr-2 relative z-20 overflow-visible;
             height: calc(100% + 1px);
             margin-bottom: -1px;
+        }
+
+        .fi-topbar-collapse-sidebar-btn-ctn {
+            @apply flex items-center shrink-0 relative z-30;
         }
 
         .fi-topbar-start::after {

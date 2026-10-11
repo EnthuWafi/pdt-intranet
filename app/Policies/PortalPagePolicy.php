@@ -1,66 +1,75 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PortalPage;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PortalPagePolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    use HandlesAuthorization;
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->hasPermissionTo('ViewAny:PortalPage');
+        return $authUser->can('ViewAny:PortalPage');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, PortalPage $portalPage): bool
+    public function view(AuthUser $authUser, PortalPage $portalPage): bool
     {
-        return false;
+        return $authUser->can('View:PortalPage');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return false;
+        return $authUser->can('Create:PortalPage');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, PortalPage $portalPage): bool
+    public function update(AuthUser $authUser, PortalPage $portalPage): bool
     {
-        return $user->hasPermissionTo('Update:PortalPage');
+        return $authUser->can('Update:PortalPage');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, PortalPage $portalPage): bool
+    public function delete(AuthUser $authUser, PortalPage $portalPage): bool
     {
-        return false;
+        return $authUser->can('Delete:PortalPage');
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, PortalPage $portalPage): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return false;
+        return $authUser->can('DeleteAny:PortalPage');
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, PortalPage $portalPage): bool
+    public function restore(AuthUser $authUser, PortalPage $portalPage): bool
     {
-        return false;
+        return $authUser->can('Restore:PortalPage');
     }
+
+    public function forceDelete(AuthUser $authUser, PortalPage $portalPage): bool
+    {
+        return $authUser->can('ForceDelete:PortalPage');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:PortalPage');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:PortalPage');
+    }
+
+    public function replicate(AuthUser $authUser, PortalPage $portalPage): bool
+    {
+        return $authUser->can('Replicate:PortalPage');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:PortalPage');
+    }
+
 }
