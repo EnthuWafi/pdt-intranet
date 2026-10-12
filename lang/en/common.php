@@ -4,6 +4,7 @@ return [
         'name'      => 'Manjung District and Land Office',
         'shortform' => 'PDT Manjung',
         'portal'    => 'Intranet Portal',
+        'portallong' => 'PDT Manjung Intranet Portal'
     ],
 
 
@@ -13,6 +14,7 @@ return [
         'unknown' => 'Unknown',
         'online'  => 'Online',
         'offline' => 'Offline',
+        'information' => 'Information',
     ],
 
     'status' => [

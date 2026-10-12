@@ -9,6 +9,8 @@ class PortalPage extends Model
     protected $fillable = [
         'slug',
         'title',
+        'icon',
+        'description',
         'blocks',
     ];
 

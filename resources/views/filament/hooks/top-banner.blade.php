@@ -26,7 +26,7 @@
 
 
 <livewire:announcement-bar />
-<div class="bg-white bg-lines dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm p-6 mb-1 flex flex-col lg:flex-row items-center justify-between gap-6">
+<div class="bg-white bg-lines dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm p-6 flex flex-col lg:flex-row items-center justify-between gap-6">
     
     {{-- Left: Brand & Crest --}}
     <div class="flex items-center gap-5 w-full lg:w-auto">

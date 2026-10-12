@@ -32,5 +32,14 @@ return new class extends Migration
     public function down(): void
     {
         //
+        Schema::table('announcements', function (Blueprint $table) {
+            $table->dropColumn(['type', 'starts_at', 'expires_at']);
+            $table->boolean('is_active')->default(1)->change();
+        });
+
+        Schema::table('portal_pages', function (Blueprint $table) {
+            $table->longText('content')->nullable(false)->change();
+            $table->dropColumn(['metadata', 'is_active']);
+        });
     }
 };

@@ -37,7 +37,7 @@ new class extends Component
         </span>
         <div class="h-4 w-px bg-gray-300 mx-1"></div>
         <div class="px-1 py-1 bg-amber-300 rounded shadow-sm">
-            <span>🔊</span>
+            <x-heroicon-m-megaphone class="w-5 h-5"/>
         </div>
         <!-- Dynamic Marquee Wrapper -->
         <div 
