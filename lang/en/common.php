@@ -56,4 +56,21 @@ return [
         'faq'     => 'FAQ',
         'contact' => 'Contact',
     ],
+
+    'footer' => [
+        'follow_us' => 'FOLLOW US',
+        'social_media' => 'Social Media',
+        'official_help' => 'OFFICIAL HELP',
+        'contact_us' => 'Contact Us',
+        'give_feedback' => 'Provide your feedback',
+        'system_reference' => 'SYSTEM REFERENCE',
+        'links' => 'Links',
+        'security_policy' => 'Security Policy',
+        'privacy_policy' => 'Privacy Policy',
+        'disclaimer' => 'Disclaimer',
+        'last_updated' => 'Last Updated:',
+        'all_rights_reserved' => 'All Rights Reserved',
+        'best_viewed' => 'Best Viewed:',
+        'browsers' => 'Browsers',
+    ],
 ];

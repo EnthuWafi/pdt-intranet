@@ -33,7 +33,7 @@
         <img src="{{ Vite::asset('resources/images/perak.webp') }}" alt="Crest" class="h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-md shrink-0">
         <div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">
-                {{ __('common.organization.portal') }} {{ __('common.organization.shortform') }}
+                {{ __('common.organization.portallong') }}
             </h1>
             <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
                 {{ __('common.organization.name') }}

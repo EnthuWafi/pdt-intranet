@@ -84,7 +84,6 @@ class PortalContentModal extends Component implements HasActions, HasForms
                     ]
                 );
 
-                // unset($this->page);
 
             });
     }

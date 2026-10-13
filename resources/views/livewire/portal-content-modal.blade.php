@@ -50,7 +50,7 @@
         </div>
 
         {{-- Modal Body: Blocks Rendering --}}
-        <div class="py-6 space-y-6">
+        <div class="py-3 space-y-2">
             @if($this->page && !empty($this->page->blocks))
                 @foreach($this->page->blocks as $block)
                     @switch($block['type'])
@@ -121,28 +121,41 @@
                             @break
 
                         @case('accordion')
-                        @case('faq_accordion')
                             @if(!empty($block['data']['faqs']))
-                                <div class="space-y-3" x-data="{ active: null }">
+                                <div class="space-y-3" x-data="{ activeAccordion: null }">
                                     @foreach($block['data']['faqs'] as $index => $faq)
-                                        <div class="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
+                                        <div class="border border-slate-200 dark:border-gray-800 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 transition-colors">
+                                            {{-- Accordion Header / Toggle Button --}}
                                             <button 
                                                 type="button" 
-                                                @click="active = active === {{ $index }} ? null : {{ $index }}"
-                                                class="w-full px-4 py-3 text-left font-medium text-gray-900 dark:text-white flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
+                                                @click="activeAccordion = activeAccordion === {{ $index }} ? null : {{ $index }}"
+                                                class="w-full px-5 py-4 text-left font-semibold text-slate-900 dark:text-white flex justify-between items-center hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors gap-4 select-none"
                                             >
-                                                <span>{{ $faq['question'] }}</span>
-                                                <x-heroicon-m-chevron-down class="w-5 h-5 text-gray-500 transition-transform duration-200" ::class="{ 'rotate-180': active === {{ $index }} }" />
+                                                <span class="text-sm sm:text-base leading-snug">{{ $faq['question'] ?? '' }}</span>
+                                                
+                                                <x-heroicon-m-chevron-down 
+                                                    class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ease-out" 
+                                                    ::class="{ 'rotate-180': activeAccordion === {{ $index }} }" 
+                                                />
                                             </button>
-                                            <div x-show="active === {{ $index }}" x-collapse class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-gray-800">
-                                                {!! $faq['answer'] !!}
+
+                                            {{-- Collapsing Wrapper (NO vertical padding here) --}}
+                                            <div 
+                                                x-show="activeAccordion === {{ $index }}" 
+                                                x-collapse.duration.250ms
+                                                x-cloak
+                                                class="border-t border-slate-100 dark:border-gray-800"
+                                            >
+                                                {{-- Inner Content Container (Padding goes here) --}}
+                                                <div class="px-5 py-4 text-sm text-slate-600 dark:text-gray-300 leading-relaxed font-normal">
+                                                    {!! $faq['answer'] ?? '' !!}
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             @endif
                             @break
-
                     @endswitch
                 @endforeach
             @else
