@@ -23,6 +23,7 @@ return [
         'email_verified_at' => 'Email Verified At',
         'password'          => 'Password',
         'position'          => 'Job Position',
+        'position_id'       => 'Position & Grade',
         'roles'             => 'Role',
         'phone'             => 'Phone Number',
         'department'        => 'Department',

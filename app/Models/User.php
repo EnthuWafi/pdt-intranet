@@ -44,6 +44,12 @@ class User extends Authenticatable implements HasMedia, HasAvatar
         return $this->belongsTo(Unit::class);
     }
 
+    //position relation
+    public function positionRelation()
+    {
+        return $this->belongsTo(Position::class, 'position_id');
+    }
+
     //department
     public function department()
     {
@@ -64,6 +70,11 @@ class User extends Authenticatable implements HasMedia, HasAvatar
     public function manager()
     {
         return $this->belongsTo(User::class, 'manager_id', 'user_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function getParentKeyName(): string
