@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Pages;
 use App\Enums\UserStatus;
 use App\Filament\Resources\Users\UserResource;
 use App\Livewire\UserStatusOverview;
+use App\Traits\HasSpecialHeader;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -12,7 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ListUsers extends ListRecords
 {
+    use HasSpecialHeader;
     protected static string $resource = UserResource::class;
+
+    protected ?string $headerCategory = 'USER MANAGEMENT';
+    protected ?string $headerIcon = 'heroicon-m-users';
+    protected ?string $headerDescription = 'Manage portal staff, departmental assignments, and role access.';
 
     protected function getHeaderWidgets(): array
     {
