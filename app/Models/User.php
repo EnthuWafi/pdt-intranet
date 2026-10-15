@@ -82,6 +82,30 @@ class User extends Authenticatable implements HasMedia, HasAvatar
         return 'manager_id';
     }
 
+    //
+    public function getInitialsAttribute(): string
+{
+    $words = preg_split('/\s+/', trim($this->name));
+    if (count($words) >= 2) {
+        return mb_strtoupper(mb_substr($words[0], 0, 1) . mb_substr($words[1], 0, 1));
+    }
+
+    return mb_strtoupper(mb_substr($this->name, 0, 2));
+}
+
+    public function getIsOnlineAttribute(): bool
+    {
+        //TODO: possible change (like discord is online, away etc dropdown)
+        return $this->last_seen && $this->last_seen->gt(now()->subMinutes(5));
+    }
+
+    public function getChatRoleUnitLabelAttribute(): string
+    {
+        $role = $this->roles->first()?->name ?? __('roles.viewer');
+        $unit = $this->unit?->name;
+
+        return collect([$role, $unit])->filter()->join(' · ');
+    }
 
     //avatar upload
     public function registerMediaCollections(): void

@@ -2,33 +2,57 @@
 
 namespace App\Traits;
 
+use BackedEnum;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 trait HasSpecialHeader
 {
     //
-    public function getHeaderCategory(): ?string
+    public function getHeaderCategory(): string | Htmlable | null
     {
-        return property_exists($this, 'headerCategory') ? $this->headerCategory : null;
+        // Check if this is a Page that belongs to a Resource
+        if (method_exists(static::class, 'getResource')) {
+            return static::getResource()::getNavigationGroup();
+        }
+
+        // Check if this is a Resource itself
+        if (method_exists(static::class, 'getNavigationGroup')) {
+            return static::getNavigationGroup();
+        }
+
+        return null;
     }
 
-    public function getHeaderDescription(): ?string
+    public function getHeaderDescription(): string | Htmlable | null
     {
-        return property_exists($this, 'headerDescription') ? $this->headerDescription : null;
+        return null;
     }
 
-    public function getHeaderIcon(): string
+    public function getHeaderIcon(): string | BackedEnum | Htmlable | null
     {
-        return property_exists($this, 'headerIcon') ? $this->headerIcon : 'heroicon-m-squares-2x2';
+        // Check if this is a Page that belongs to a Resource
+        if (method_exists(static::class, 'getResource')) {
+            return static::getResource()::getNavigationIcon();
+        }
+
+        // Check if this is a Resource itself
+        if (method_exists(static::class, 'getNavigationGroup')) {
+            return static::getNavigationIcon();
+        }
+
+        return null;
+
     }
 
     public function getHeader(): ?View
     {
         return view('filament.components.portal-page-header', [
-            'title' => $this->getTitle(),
+            'title' => $this->getHeading(),
             'category' => $this->getHeaderCategory(),
             'description' => $this->getHeaderDescription(),
             'icon' => $this->getHeaderIcon(),
             'actions' => $this->getCachedHeaderActions(),
+            'breadcrumbs' => $this->getBreadcrumbs(),
         ]);
     }
 }

@@ -32,9 +32,9 @@
                 <div class="text-xs font-black tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                     <span>MANJUNG</span>
                     <span class="text-yellow-500 font-bold">|</span>
-                    <span>PROSPEROUS</span>
+                    <span>MAJU</span>
                     <span class="text-yellow-500 font-bold">|</span>
-                    <span>DEVELOPING</span>
+                    <span>MEMBANGUN</span>
                 </div>
 
                 {{-- Interactive / Embedded Map Card --}}

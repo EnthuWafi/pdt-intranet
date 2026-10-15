@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Departments;
 
+use App\Filament\Clusters\DataMaster\DataMasterCluster;
 use App\Filament\Resources\Departments\Pages\CreateDepartment;
 use App\Filament\Resources\Departments\Pages\EditDepartment;
 use App\Filament\Resources\Departments\Pages\ListDepartments;
@@ -18,14 +19,16 @@ class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
 
+    protected static ?string $cluster = DataMasterCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('navigation.groups.user_management');
-    }
+    // public static function getNavigationGroup(): ?string
+    // {
+    //     return __('navigation.groups.user_management');
+    // }
     public static function getModelLabel(): string
     {
         return __('department.resource.label');

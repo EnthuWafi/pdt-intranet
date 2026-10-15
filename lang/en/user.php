@@ -36,5 +36,16 @@ return [
 
     'notification' => [
         'does_not_exist' => 'Selected user does not exist.'
-    ]
+    ],
+
+    'header' => [
+        'description' => 'Manage portal staff, departmental assignments, and role access.',
+    ],
+
+    'tabs' => [
+        'all' => 'All Users',
+        'pending' => 'Pending Approval',
+        'active' => 'Active',
+        'suspended' => 'Suspended',
+    ],
 ];

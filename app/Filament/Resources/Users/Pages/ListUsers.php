@@ -16,9 +16,10 @@ class ListUsers extends ListRecords
     use HasSpecialHeader;
     protected static string $resource = UserResource::class;
 
-    protected ?string $headerCategory = 'USER MANAGEMENT';
-    protected ?string $headerIcon = 'heroicon-m-users';
-    protected ?string $headerDescription = 'Manage portal staff, departmental assignments, and role access.';
+    public function getHeaderDescription()
+    {
+        return __('user.header.description');
+    }
 
     protected function getHeaderWidgets(): array
     {
@@ -34,14 +35,14 @@ class ListUsers extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All Users'),
-            'pending' => Tab::make('Pending Approval')
+            'all' => Tab::make(__('user.tabs.all')),
+            'pending' => Tab::make(__('user.tabs.pending'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', UserStatus::PENDING))
                 ->badge(fn () => static::getModel()::where('status', UserStatus::PENDING)->count())
                 ->badgeColor('warning'),
-            'active' => Tab::make('Active')
+            'active' => Tab::make(__('user.tabs.active'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', UserStatus::ACTIVE)),
-            'suspended' => Tab::make('Suspended')
+            'suspended' => Tab::make(__('user.tabs.suspended'))
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', UserStatus::SUSPENDED)),
         ];
     }

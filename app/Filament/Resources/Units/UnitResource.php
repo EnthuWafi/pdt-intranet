@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Units;
 
+use App\Filament\Clusters\DataMaster\DataMasterCluster;
 use App\Filament\Resources\Units\Pages\CreateUnit;
 use App\Filament\Resources\Units\Pages\EditUnit;
 use App\Filament\Resources\Units\Pages\ListUnits;
@@ -18,14 +19,16 @@ class UnitResource extends Resource
 {
     protected static ?string $model = Unit::class;
 
+    protected static ?string $cluster = DataMasterCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('navigation.groups.user_management');
-    }
+    // public static function getNavigationGroup(): ?string
+    // {
+    //     return __('navigation.groups.user_management');
+    // }
     public static function getModelLabel(): string
     {
         return __('unit.resource.label');

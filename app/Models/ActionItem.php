@@ -24,7 +24,7 @@ class ActionItem extends Model
     protected $casts = [
         'status' => ActionItemStatus::class,
         'action_type' => ActionType::class,
-        'required_permissions' => 'array',
+        'required_permission' => 'array',
         'completed_at' => 'datetime',
         'payload' => 'array',
     ];
@@ -226,7 +226,7 @@ class ActionItem extends Model
                 'action_type'          => ActionType::REVIEW,
                 'payload'              => $this->payload,
                 'status'               => ActionItemStatus::PENDING_APPROVAL,
-                'required_permissions' => $permissions,
+                'required_permission'  => $permissions,
             ]);
         });
     }
@@ -264,7 +264,7 @@ class ActionItem extends Model
                 'action_type'          => ActionType::APPROVE,
                 'payload'              => $mergedPayload,
                 'status'               => ActionItemStatus::PENDING_APPROVAL,
-                'required_permissions' => $permissions,
+                'required_permission'  => $permissions,
             ]);
         });
     }
@@ -358,7 +358,7 @@ class ActionItem extends Model
                 'action_type'          => $this->action_type,
                 'payload'              => $this->payload,
                 'status'               => ActionItemStatus::PENDING_APPROVAL,
-                'required_permissions' => $this->required_permissions,
+                'required_permission'  => $this->required_permissions,
             ]);
         });
     }

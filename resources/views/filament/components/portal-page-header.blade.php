@@ -2,11 +2,17 @@
     'title',
     'category' => null,
     'description' => null,
-    'icon' => 'heroicon-m-squares-2x2',
+    'icon' => null,
     'actions' => [],
+    'breadcrumbs' => [],
 ])
 
-<div class="mb-6 relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900 border border-slate-200/80 dark:border-gray-800 shadow-sm p-6">
+<div class="space-y-4 mb-6 ">
+@if (! empty($breadcrumbs))
+    <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
+@endif
+
+<div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900 border border-slate-200/80 dark:border-gray-800 shadow-sm p-6">
     {{-- Left Accent Line --}}
     <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-yellow-400"></div>
 
@@ -46,4 +52,5 @@
             </div>
         @endif
     </div>
+</div>
 </div>
