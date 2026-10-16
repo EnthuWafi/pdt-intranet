@@ -45,9 +45,14 @@ class User extends Authenticatable implements HasMedia, HasAvatar
     }
 
     //position relation
-    public function positionRelation()
+    public function positionRecord()
     {
         return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function getPositionLabelAttribute(): ?string
+    {
+        return $this->positionRecord?->name ?? $this->attributes['position'] ?? null;
     }
 
     //department

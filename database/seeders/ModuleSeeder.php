@@ -14,8 +14,9 @@ class ModuleSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // For internal module just handle here, make roles and everything here
         // 1. Ensure core internal modules exist in the catalog
+
         $stock = Module::firstOrCreate(
             ['code' => 'EZSTOK'],
             [

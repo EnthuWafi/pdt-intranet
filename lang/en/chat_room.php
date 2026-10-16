@@ -18,4 +18,6 @@ return [
 
     'message_placeholder' => 'Type a message...',
     'send' => 'Send',
+
+    'create_group' => 'Create'
 ];
