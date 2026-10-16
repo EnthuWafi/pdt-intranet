@@ -76,35 +76,35 @@ class UserForm
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Select::make('category')
+                                Select::make('user_category')
                                     ->label(__('user.fields.category'))
                                     ->prefixIcon('heroicon-o-tag')
                                     ->options(UserCategory::class)
                                     ->default(UserCategory::INTERNAL)
                                     ->live()
                                     ->afterStateUpdated(function ($state, Set $set): void {
-                                        $isInternal = $state === UserCategory::INTERNAL || $state === UserCategory::INTERNAL->value;
+                                        $isInternal = self::isInternal($state);
 
                                         if ($isInternal) {
-                                            $set('organization', __('common.organization.name', locale: 'ms'));
+                                            $set('agency_name', __('common.organization.name', locale: 'ms'));
                                         } else {
-                                            $set('organization', null);
+                                            $set('agency_name', null);
                                             $set('department_id', null);
                                             $set('unit_id', null);
                                         }
                                     })
                                     ->required(),
 
-                                TextInput::make('organization')
+                                TextInput::make('agency_name')
                                     ->label(__('user.fields.organization'))
                                     ->prefixIcon('heroicon-o-building-library')
                                     ->default(__('common.organization.name', locale: 'ms'))
-                                    ->disabled(fn (Get $get): bool => self::isInternal($get('category')))
+                                    ->disabled(fn (Get $get): bool => self::isInternal($get('user_category')))
                                     ->dehydrated()
-                                    ->dehydrateStateUsing(fn (?string $state, Get $get): ?string => self::isInternal($get('category'))
+                                    ->dehydrateStateUsing(fn (?string $state, Get $get): ?string => self::isInternal($get('user_category'))
                                         ? __('common.organization.name', locale: 'ms')
                                         : $state)
-                                    ->required(fn (Get $get): bool => ! self::isInternal($get('category')))
+                                    ->required(fn (Get $get): bool => ! self::isInternal($get('user_category')))
                                     ->maxLength(255),
 
                                 Select::make('department_id')
@@ -115,9 +115,9 @@ class UserForm
                                     ->preload()
                                     ->live()
                                     ->afterStateUpdated(fn (Set $set) => $set('unit_id', null))
-                                    ->disabled(fn (Get $get): bool => ! self::isInternal($get('category')))
+                                    ->disabled(fn (Get $get): bool => ! self::isInternal($get('user_category')))
                                     ->dehydrated()
-                                    ->required(fn (Get $get): bool => self::isInternal($get('category'))),
+                                    ->required(fn (Get $get): bool => self::isInternal($get('user_category'))),
 
                                 Select::make('unit_id')
                                     ->label(__('user.fields.unit'))
@@ -127,9 +127,9 @@ class UserForm
                                         ->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
-                                    ->disabled(fn (Get $get): bool => ! self::isInternal($get('category')) || blank($get('department_id')))
+                                    ->disabled(fn (Get $get): bool => ! self::isInternal($get('user_category')) || blank($get('department_id')))
                                     ->dehydrated()
-                                    ->required(fn (Get $get): bool => self::isInternal($get('category'))),
+                                    ->required(fn (Get $get): bool => self::isInternal($get('user_category'))),
 
                                 Select::make('position_id')
                                     ->label(__('user.fields.position'))
